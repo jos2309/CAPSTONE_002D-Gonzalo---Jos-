@@ -1,0 +1,93 @@
+/* ================================================================
+   PALETA DE COLORES OFICIALES (VINTAGE PAPER & FRESH ACCENTS)
+   ================================================================ */
+$bg-main: #F4EEE0;       /* Fondo principal: Hoja de libro viejo / pergamino cálido */
+$bg-sec: #EAF3E8;        /* Fondo secundario verde agua claro */
+
+$text-main: #33403A;     /* Texto principal verde pizarra oscuro */
+$text-sec: #6E7C74;      /* Texto secundario / muted */
+
+$primary: #2F8F6E;       /* Primario verde esmeralda suave */
+$secondary: #4A90A4;     /* Secundario azul/manta */
+
+$accent-cta: #FF9F5B;    /* Acento / Botones principales (Naranja) */
+$badge-reward: #FFD166;  /* Logro / Insignias / Estrellas (Dorado) */
+
+$success: #52B788;       /* Éxito / Respuestas correctas */
+$alert: #E0575B;         /* Alerta / Errores y Bloqueos reales */
+
+:root {
+  --bg-main: #{$bg-main};
+  --bg-sec: #{$bg-sec};
+  --text-main: #{$text-main};
+  --text-sec: #{$text-sec};
+  --primary: #{$primary};
+  --secondary: #{$secondary};
+  --accent-cta: #{$accent-cta};
+  --badge-reward: #{$badge-reward};
+  --success: #{$success};
+  --alert: #{$alert};
+}
+
+body {
+  background-color: $bg-main;
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: $text-main;
+}
+
+/* ================================================================
+   SISTEMA DE DISEÑO RESPONSIVO UNIFICADO
+   ================================================================ */
+
+.game-page-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: $bg-main;
+}
+
+.game-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(51, 64, 58, 0.06);
+  box-sizing: border-box;
+  border: 2px solid $bg-sec;
+}
+
+.game-layout-grid {
+  display: grid;
+  width: 100%;
+  gap: 1.5rem;
+  align-items: center;
+
+  .layout-center { grid-area: center; }
+  .layout-left   { grid-area: left; }
+  .layout-right  { grid-area: right; }
+}
+
+@media (min-width: 768px) and (min-aspect-ratio: 1/1) {
+  .game-layout-grid {
+    grid-template-columns: 1fr 340px 1fr;
+    grid-template-areas: "left center right";
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 767px), (max-aspect-ratio: 1/1) {
+  .game-layout-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "left"
+      "center"
+      "right";
+  }
+}

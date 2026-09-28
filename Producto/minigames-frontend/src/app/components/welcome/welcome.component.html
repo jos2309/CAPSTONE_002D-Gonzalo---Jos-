@@ -1,0 +1,46 @@
+<div class="welcome-container">
+  <header class="header">
+    <div class="header-badge">Literatus the game</div>
+    <h1>Selecciona un Minijuego</h1>
+    <p>Una lista de los demos de minijuegos para incluir en literatus.</p>
+  </header>
+
+  <div class="games-grid">
+    <div
+      *ngFor="let game of minigames; let i = index"
+      class="game-card"
+      [ngClass]="'theme-' + ((i % 5) + 1)"
+      [class.disabled]="game.comingSoon"
+    >
+      <div class="card-status-badge" *ngIf="game.comingSoon">
+        Próximamente
+      </div>
+
+      <div class="icon-bubble">
+        <span class="icon">{{ game.icon }}</span>
+      </div>
+
+      <div class="card-content">
+        <h2>{{ game.title }}</h2>
+        <p>{{ game.description }}</p>
+      </div>
+
+      <a
+        *ngIf="!game.comingSoon"
+        [routerLink]="game.route"
+        (click)="scrollToTop()"
+        class="btn-play"
+      >
+        ¡Jugar! 🚀
+      </a>
+
+      <button
+        *ngIf="game.comingSoon"
+        class="btn-play btn-disabled"
+        disabled
+      >
+        Bloqueado 🔒
+      </button>
+    </div>
+  </div>
+</div>
