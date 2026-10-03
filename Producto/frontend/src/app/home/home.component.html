@@ -1,0 +1,446 @@
+<div class="home-wrapper">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       1. HERO SECTION (MASCOTA GUÍA & CONCEPTO "VÍVELA")
+  ═══════════════════════════════════════════════════════════ -->
+  <header class="hero-section">
+    <!-- FONDO AMBIENTAL: BIBLIOTECA MÁGICA PANORÁMICA -->
+    <div class="hero-bg-library" aria-hidden="true">
+      <div class="hero-library-img"></div>
+      <div class="hero-library-overlay"></div>
+    </div>
+
+    <div class="hero-bg-particles">
+      <span *ngFor="let p of [1,2,3,4,5,6,7,8]" class="particle"></span>
+    </div>
+
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1 class="hero-headline">
+          No solo leas la historia.<br>
+          <span class="glow-span">Vívela.</span>
+        </h1>
+        <p class="hero-subheadline">
+          Explora los grandes clásicos de la literatura universal y conversa con sus personajes mediante inteligencia artificial en tiempo real.
+        </p>
+        
+        <div class="hero-ctas">
+          <a routerLink="/catalog" class="cta-primary" id="hero-cta-explore">
+            Explorar Historias →
+          </a>
+          <a routerLink="/characters" class="cta-secondary" id="hero-cta-characters">
+            Hablar con Personajes
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <!-- Fondo de degradado radial detrás del mago -->
+        <div class="mascot-radial-glow"></div>
+        
+        <!-- Speech Bubble saliendo de la mascota Mago -->
+        <div class="hero-speech-bubble">
+          <p>¡Hola! ¿Qué aventura jugaremos hoy? 🧙‍♂️</p>
+          <div class="speech-arrow"></div>
+        </div>
+
+        <!-- Destellos flotantes (estrellas/cruces en #FFD166 y #4A90A4) -->
+        <div class="floating-sparkles">
+          <span class="sparkle sparkle-gold s1">✦</span>
+          <span class="sparkle sparkle-blue s2">✨</span>
+          <span class="sparkle sparkle-gold s3">★</span>
+          <span class="sparkle sparkle-blue s4">✦</span>
+          <span class="sparkle sparkle-gold s5">✨</span>
+        </div>
+
+        <div class="hero-lottie-container" #readingContainer></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       2. SECCIÓN 1 — HISTORIAS DESTACADAS (TARJETAS COLECCIONABLES)
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="stories-section reveal-section" aria-label="Historias destacadas">
+    <div class="section-container">
+      <div class="section-header text-center">
+        <span class="section-badge-pill">📚 Biblioteca de Aventuras</span>
+        <h2 class="section-title">Historias destacadas</h2>
+        <p class="section-subtitle">Grandes clásicos para nuevas aventuras.</p>
+      </div>
+
+      <div class="collectible-grid">
+        <!-- Tarjeta 1: Peter Pan -->
+        <div class="collectible-card" (click)="goToBook('peter-pan')">
+          <div class="card-cover-wrapper">
+            <div class="level-chip">Nivel 1</div>
+            <img src="assets/default_cover.jpg" alt="Peter Pan" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="card-hover-overlay">
+              <span class="cta-start-btn">Comenzar aventura →</span>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-meta-tags">
+              <span class="genre-pill">Aventura</span>
+              <span class="chapters-pill">12 capítulos</span>
+            </div>
+            <h3 class="card-book-title">Peter Pan</h3>
+            <p class="card-book-author">J. M. Barrie</p>
+            
+            <div class="card-progress-bar-wrap">
+              <div class="progress-info-labels">
+                <span>Progreso</span>
+                <span>35%</span>
+              </div>
+              <div class="card-progress-track">
+                <div class="card-progress-fill" style="width: 35%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Alicia en el País de las Maravillas -->
+        <div class="collectible-card" (click)="goToBook('alicia-en-el-pais-de-las-maravillas')">
+          <div class="card-cover-wrapper">
+            <div class="level-chip">Nivel 1</div>
+            <img src="assets/default_cover.jpg" alt="Alicia en el País de las Maravillas" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="card-hover-overlay">
+              <span class="cta-start-btn">Comenzar aventura →</span>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-meta-tags">
+              <span class="genre-pill">Fantasía</span>
+              <span class="chapters-pill">10 capítulos</span>
+            </div>
+            <h3 class="card-book-title">Alicia en el País de las Maravillas</h3>
+            <p class="card-book-author">Lewis Carroll</p>
+            
+            <div class="card-progress-bar-wrap">
+              <div class="progress-info-labels">
+                <span>Progreso</span>
+                <span>60%</span>
+              </div>
+              <div class="card-progress-track">
+                <div class="card-progress-fill" style="width: 60%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3: Las Aventuras de Tom Sawyer -->
+        <div class="collectible-card" (click)="goToBook('las-aventuras-de-tom-sawyer')">
+          <div class="card-cover-wrapper">
+            <div class="level-chip">Nivel 2</div>
+            <img src="assets/default_cover.jpg" alt="Las Aventuras de Tom Sawyer" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="card-hover-overlay">
+              <span class="cta-start-btn">Comenzar aventura →</span>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-meta-tags">
+              <span class="genre-pill">Aventura</span>
+              <span class="chapters-pill">14 capítulos</span>
+            </div>
+            <h3 class="card-book-title">Las Aventuras de Tom Sawyer</h3>
+            <p class="card-book-author">Mark Twain</p>
+            
+            <div class="card-progress-bar-wrap">
+              <div class="progress-info-labels">
+                <span>Progreso</span>
+                <span>15%</span>
+              </div>
+              <div class="card-progress-track">
+                <div class="card-progress-fill" style="width: 15%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4: El Principito -->
+        <div class="collectible-card" (click)="goToBook('el-principito')">
+          <div class="card-cover-wrapper">
+            <div class="level-chip">Nivel 1</div>
+            <img src="assets/default_cover.jpg" alt="El Principito" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="card-hover-overlay">
+              <span class="cta-start-btn">Comenzar aventura →</span>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-meta-tags">
+              <span class="genre-pill">Fantasía</span>
+              <span class="chapters-pill">9 capítulos</span>
+            </div>
+            <h3 class="card-book-title">El Principito</h3>
+            <p class="card-book-author">Antoine de Saint-Exupéry</p>
+            
+            <div class="card-progress-bar-wrap">
+              <div class="progress-info-labels">
+                <span>Progreso</span>
+                <span>80%</span>
+              </div>
+              <div class="card-progress-track">
+                <div class="card-progress-fill" style="width: 80%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       3. SECCIÓN 2 — PERSONAJES (CONVERSA CON LOS GRANDES PERSONAJES)
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="game-characters-section reveal-section" aria-label="Personajes de interacción">
+    <div class="section-container">
+      <div class="section-header flex-header">
+        <div>
+          <span class="section-badge-pill">🎭 Interacción IA</span>
+          <h2 class="section-title">Conversa con los grandes personajes</h2>
+          <p class="section-subtitle">Chatea en tiempo real y desbloquea perspectivas únicas.</p>
+        </div>
+        <a routerLink="/characters" class="see-all-link">Ver todos los personajes →</a>
+      </div>
+
+      <div class="characters-grid">
+        <!-- Personaje 1 -->
+        <div class="character-game-card">
+          <div class="char-avatar-box">
+            <img src="assets/default_avatar.jpg" alt="Sherlock Holmes" class="char-avatar-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="char-role-badge">Detective</div>
+          </div>
+          <div class="char-card-body">
+            <h3 class="char-card-name">Sherlock Holmes</h3>
+            <p class="char-card-role">Detective Astuto</p>
+            <p class="char-card-desc">Resuelve misterios arcanos utilizando la deducción y la lógica.</p>
+            <button class="btn-talk-action" (click)="goToCharactersHub()">
+              💬 Hablar
+            </button>
+          </div>
+        </div>
+
+        <!-- Personaje 2 -->
+        <div class="character-game-card">
+          <div class="char-avatar-box">
+            <img src="assets/default_avatar.jpg" alt="Alicia" class="char-avatar-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="char-role-badge">Aventurera</div>
+          </div>
+          <div class="char-card-body">
+            <h3 class="char-card-name">Alicia</h3>
+            <p class="char-card-role">Exploradora de Maravillas</p>
+            <p class="char-card-desc">Curiosa y valiente ante los enigmas del mundo subterráneo.</p>
+            <button class="btn-talk-action" (click)="goToCharactersHub()">
+              💬 Hablar
+            </button>
+          </div>
+        </div>
+
+        <!-- Personaje 3 -->
+        <div class="character-game-card">
+          <div class="char-avatar-box">
+            <img src="assets/default_avatar.jpg" alt="El Principito" class="char-avatar-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="char-role-badge">Soñador</div>
+          </div>
+          <div class="char-card-body">
+            <h3 class="char-card-name">El Principito</h3>
+            <p class="char-card-role">Soñador Estelar</p>
+            <p class="char-card-desc">Viajero de asteroides que ve lo esencial con el corazón.</p>
+            <button class="btn-talk-action" (click)="goToCharactersHub()">
+              💬 Hablar
+            </button>
+          </div>
+        </div>
+
+        <!-- Personaje 4 -->
+        <div class="character-game-card">
+          <div class="char-avatar-box">
+            <img src="assets/default_avatar.jpg" alt="Don Quijote" class="char-avatar-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="char-role-badge">Caballero</div>
+          </div>
+          <div class="char-card-body">
+            <h3 class="char-card-name">Don Quijote</h3>
+            <p class="char-card-role">Caballero Andante</p>
+            <p class="char-card-desc">Defensor de ideales nobles que convierte molinos en gigantes.</p>
+            <button class="btn-talk-action" (click)="goToCharactersHub()">
+              💬 Hablar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       4. SECCIÓN 3 — TU AVENTURA (PROGRESO & ESTADÍSTICAS)
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="adventure-progress-section reveal-section" aria-label="Progreso del usuario">
+    <div class="section-container">
+      <div class="adventure-card-panel">
+        <div class="adventure-left-info">
+          <div class="level-badge-large">
+            <span class="level-num">Nivel {{ userAdventureState.level }}</span>
+            <span class="level-title-sub">{{ userAdventureState.levelTitle }}</span>
+          </div>
+
+          <div class="adventure-xp-section">
+            <div class="xp-labels">
+              <span class="xp-title">Experiencia Acumulada</span>
+              <span class="xp-count"><strong>{{ userAdventureState.currentXp }}</strong> / {{ userAdventureState.maxXp }} XP</span>
+            </div>
+            <div class="adventure-xp-track">
+              <div class="adventure-xp-fill" [style.width.%]="userAdventureState.xpPercentage"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="adventure-right-stats">
+          <div class="stat-bubble-chip">
+            <span class="stat-icon">🏆</span>
+            <div class="stat-meta">
+              <span class="stat-val">{{ userAdventureState.badgesCount }}</span>
+              <span class="stat-lbl">Insignias</span>
+            </div>
+          </div>
+
+          <div class="stat-bubble-chip">
+            <span class="stat-icon">📖</span>
+            <div class="stat-meta">
+              <span class="stat-val">{{ userAdventureState.storiesRead }}</span>
+              <span class="stat-lbl">Historias</span>
+            </div>
+          </div>
+
+          <div class="stat-bubble-chip">
+            <span class="stat-icon">💬</span>
+            <div class="stat-meta">
+              <span class="stat-val">{{ userAdventureState.chatsCount }}</span>
+              <span class="stat-lbl">Conversaciones</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       5. SECCIÓN 4 — MAPA DE HISTORIA (TRAIL VISUAL DE NAVEGACIÓN)
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="story-map-section reveal-section" aria-label="Ruta de la historia">
+    <div class="section-container">
+      <div class="section-header text-center">
+        <span class="section-badge-pill">🗺️ Progreso Narrativo</span>
+        <h2 class="section-title">Mapa de la Historia</h2>
+        <p class="section-subtitle">Cada historia es un camino interactivo donde cada decisión cuenta.</p>
+      </div>
+
+      <div class="story-trail-container">
+        <div 
+          *ngFor="let node of storyTrailNodes" 
+          class="trail-node-card" 
+          [class.completed]="node.status === 'completed'"
+          [class.current]="node.status === 'current'"
+          [class.locked]="node.status === 'locked'"
+          [routerLink]="'/reading-canvas'">
+          
+          <div class="node-icon-circle">
+            <span>{{ node.icon }}</span>
+          </div>
+
+          <div class="node-meta">
+            <span class="node-chapter-num">Capítulo {{ node.chapter }}</span>
+            <h4 class="node-chapter-title">{{ node.title }}</h4>
+          </div>
+
+          <div class="node-status-tag">
+            <span *ngIf="node.status === 'completed'">✓ Completado</span>
+            <span *ngIf="node.status === 'current'">🔥 En curso</span>
+            <span *ngIf="node.status === 'locked'">🔒 Bloqueado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       6. SECCIÓN 5 — LOGROS E INSIGNIAS (#FFD166)
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="achievements-section reveal-section" aria-label="Logros e insignias">
+    <div class="section-container">
+      <div class="section-header text-center">
+        <span class="section-badge-pill">⭐ Reconocimientos</span>
+        <h2 class="section-title">Logros e Insignias</h2>
+        <p class="section-subtitle">Colecciona medallas a medida que exploras el universo de la lectura.</p>
+      </div>
+
+      <div class="achievements-grid">
+        <div 
+          *ngFor="let badge of achievementsList" 
+          class="badge-card"
+          [class.unlocked]="badge.unlocked"
+          [class.locked]="!badge.unlocked">
+          
+          <div class="badge-icon-wrap">
+            <span>{{ badge.icon }}</span>
+          </div>
+
+          <h4 class="badge-title">{{ badge.title }}</h4>
+          <p class="badge-desc">{{ badge.description }}</p>
+
+          <span class="badge-state-label">
+            {{ badge.unlocked ? '✓ Desbloqueado' : '🔒 Bloqueado' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       7. SECCIÓN 6 — ¿CÓMO FUNCIONA? (4 PASOS)
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="how-it-works-section reveal-section" aria-label="¿Cómo funciona?">
+    <div class="section-container">
+      <div class="section-header text-center">
+        <h2 class="section-title">¿Cómo funciona?</h2>
+        <p class="section-subtitle">Cuatro pasos sencillos para vivir una aventura inolvidable.</p>
+      </div>
+
+      <div class="how-steps">
+        <div class="how-step" id="step-1">
+          <div class="how-step-num">01</div>
+          <div class="how-step-icon"><span>📚</span></div>
+          <h3 class="how-step-title">1. Elige una historia</h3>
+          <p class="how-step-desc">Explora la biblioteca interactiva y selecciona tu próximo clásico preferido.</p>
+        </div>
+
+        <div class="how-connector" aria-hidden="true"></div>
+
+        <div class="how-step" id="step-2">
+          <div class="how-step-num">02</div>
+          <div class="how-step-icon"><span>🎭</span></div>
+          <h3 class="how-step-title">2. Conoce a sus personajes</h3>
+          <p class="how-step-desc">Conversa directamente mediante IA para resolver dudas y conocer sus secretos.</p>
+        </div>
+
+        <div class="how-connector" aria-hidden="true"></div>
+
+        <div class="how-step" id="step-3">
+          <div class="how-step-num">03</div>
+          <div class="how-step-icon"><span>🧭</span></div>
+          <h3 class="how-step-title">3. Toma decisiones</h3>
+          <p class="how-step-desc">Toma elecciones estratégicas en los momentos clave y moldea el rumbo del relato.</p>
+        </div>
+
+        <div class="how-connector" aria-hidden="true"></div>
+
+        <div class="how-step" id="step-4">
+          <div class="how-step-num">04</div>
+          <div class="how-step-icon"><span>⭐</span></div>
+          <h3 class="how-step-title">4. Desbloquea logros</h3>
+          <p class="how-step-desc">Suma experiencia XP, colecciona insignias y desbloquea capítulos secretos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

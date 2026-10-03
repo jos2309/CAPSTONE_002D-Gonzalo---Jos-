@@ -1,0 +1,299 @@
+<div class="hub-container">
+
+  <!-- 1. HERO COMPACTO (Inmediatamente debajo del header) -->
+  <header class="characters-hero">
+    <div class="hero-inner">
+      <div class="hero-text-content">
+        <div class="hero-badge">
+          <span class="badge-icon">🎭</span>
+          <span>GALERÍA NARRATIVA</span>
+        </div>
+        <h1 class="hero-title">Conoce a los personajes</h1>
+        <p class="hero-subtitle">
+          Descubre quiénes viven dentro de nuestras historias y conoce sus mundos.
+        </p>
+      </div>
+
+      <div class="hero-illustration">
+        <div class="illustration-badge-glow"></div>
+        <div class="hero-floating-icons">
+          <span class="float-icon icon-book" title="Libro abierto">📖</span>
+          <span class="float-icon icon-mask" title="Máscaras teatrales">🎭</span>
+          <span class="float-icon icon-star" title="Estrellas mágicas">✨</span>
+          <span class="float-icon icon-bubble" title="Conversación">💬</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. BUSCADOR & ACCIONES RÁPIDAS -->
+  <section class="search-section">
+    <div class="search-bar-container">
+      <div class="search-box">
+        <span class="search-icon">🔎</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="onSearchChange()"
+          placeholder="Busca personajes, libros o autores..." 
+          class="search-input"
+          aria-label="Busca personajes, libros o autores"
+        />
+        <button class="clear-btn" *ngIf="searchQuery" (click)="clearSearch()" title="Limpiar búsqueda">✕</button>
+      </div>
+    </div>
+
+    <!-- Píldoras de Acciones Rápidas -->
+    <div class="quick-actions-pills">
+      <button class="quick-pill" [class.active]="activeQuickFilter === 'all'" (click)="setQuickFilter('all')">
+        🎭 Todos los Personajes
+      </button>
+      <button class="quick-pill" [class.active]="activeQuickFilter === 'stories'" (click)="setQuickFilter('stories')">
+        📚 De historias
+      </button>
+      <button class="quick-pill" [class.active]="activeQuickFilter === 'featured'" (click)="setQuickFilter('featured')">
+        ⭐ Destacados
+      </button>
+      <button class="quick-pill" [class.active]="activeQuickFilter === 'ai'" (click)="setQuickFilter('ai')">
+        💬 Con IA
+      </button>
+    </div>
+  </section>
+
+  <!-- ESTADO DE ERROR DE API -->
+  <div class="error-banner" *ngIf="errorMsg && allCharacters.length === 0">
+    <div class="error-emoji">📚🎭</div>
+    <h3 class="error-title">Nuestros personajes están tomando un pequeño descanso.</h3>
+    <p class="error-desc">Comprueba tu conexión e inténtalo nuevamente.</p>
+    <button class="retry-btn" (click)="retryLoad()">
+      <span>🔄 Reintentar</span>
+    </button>
+  </div>
+
+  <!-- SKELETON CARDS DURANTE LA CARGA -->
+  <div class="skeleton-container" *ngIf="isLoading && allCharacters.length === 0">
+    <div class="skeleton-grid">
+      <div class="skeleton-card" *ngFor="let s of skeletonArray">
+        <div class="shimmer-img"></div>
+        <div class="shimmer-body">
+          <div class="shimmer-line title"></div>
+          <div class="shimmer-line text"></div>
+          <div class="shimmer-line short"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADOS DE BÚSQUEDA -->
+  <section class="results-section" *ngIf="isSearching && !isLoading">
+    <div class="section-header">
+      <h2 class="section-title">Resultados de "{{ searchQuery }}"</h2>
+    </div>
+
+    <div class="character-grid" *ngIf="filteredCharacters.length > 0">
+      <div class="character-card" *ngFor="let char of filteredCharacters">
+        <div class="card-img-wrap">
+          <img [src]="char.avatar_image_url || 'assets/default_avatar.jpg'" [alt]="char.name" class="char-portrait-img" (error)="char.avatar_image_url = 'assets/default_avatar.jpg'">
+          <span class="book-pill" *ngIf="char.book_title">📖 {{ char.book_title }}</span>
+        </div>
+        <div class="card-body">
+          <h3 class="char-name">{{ char.name }}</h3>
+          <p class="char-book">De: {{ char.book_title || 'Biblioteca Literatus' }}</p>
+          <p class="char-desc" *ngIf="char.description">{{ char.description | slice:0:90 }}...</p>
+          <div class="card-actions">
+            <button class="btn-learn" (click)="goToBook(char.book_slug)">
+              Conocer personaje →
+            </button>
+            <button class="btn-chat" (click)="openChat(char)">
+              💬 Hablar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BÚSQUEDA SIN RESULTADOS -->
+    <div class="no-results-card" *ngIf="filteredCharacters.length === 0">
+      <div class="no-results-icon">🔎✨</div>
+      <h3>No encontramos a ese personaje.</h3>
+      <p>Prueba con otro nombre o busca una historia en nuestro catálogo.</p>
+      <button class="reset-search-btn" (click)="clearSearch()">Ver todos los personajes</button>
+    </div>
+  </section>
+
+  <!-- CONTENIDO PRINCIPAL (SI NO ESTÁ BUSCANDO) -->
+  <main class="hub-main" *ngIf="!isSearching && (!isLoading || allCharacters.length > 0)">
+
+    <!-- 5. PERSONAJES DESTACADOS -->
+    <section class="hub-section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">⭐ SELECCIÓN DE LA COMUNIDAD</span>
+          <h2 class="section-title">Personajes destacados</h2>
+          <p class="section-subtitle">Los personajes que están esperando conocerte.</p>
+        </div>
+      </div>
+
+      <div class="character-grid featured-grid">
+        <div class="character-card featured-card" *ngFor="let char of featuredCharacters">
+          <div class="card-img-wrap">
+            <img [src]="char.avatar_image_url || 'assets/default_avatar.jpg'" [alt]="char.name" class="char-portrait-img" (error)="char.avatar_image_url = 'assets/default_avatar.jpg'">
+            <span class="genre-pill" *ngIf="char.genre || (char.tags && char.tags[0])">
+              🔎 {{ char.genre || char.tags[0] }}
+            </span>
+          </div>
+          <div class="card-body">
+            <h3 class="char-name">{{ char.name }}</h3>
+            <p class="char-book">De: <strong>{{ char.book_title || 'Historia Literatus' }}</strong></p>
+            <p class="char-desc">{{ char.description ? (char.description | slice:0:100) + '...' : 'Descubre sus aventuras y conversa en tiempo real.' }}</p>
+            
+            <div class="card-actions">
+              <button class="btn-learn" (click)="goToBook(char.book_slug)">
+                Conocer personaje →
+              </button>
+              <button class="btn-chat" (click)="openChat(char)">
+                💬 Hablar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. PERSONAJES POR TIPO (¿A quién quieres conocer?) -->
+    <section class="hub-section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">🧭 CLASIFICACIÓN</span>
+          <h2 class="section-title">¿A quién quieres conocer?</h2>
+          <p class="section-subtitle">Filtra personajes por su arquetipo o género de aventura.</p>
+        </div>
+      </div>
+
+      <div class="categories-horizontal-bar">
+        <button 
+          class="cat-chip" 
+          *ngFor="let cat of categories"
+          [class.active]="selectedCategory === cat.slug"
+          (click)="setCategoryFilter(cat.slug)"
+        >
+          <span class="cat-icon">{{ cat.icon }}</span>
+          <span>{{ cat.name }}</span>
+        </button>
+      </div>
+
+      <!-- Grid filtrado por categoría -->
+      <div class="character-grid">
+        <div class="character-card" *ngFor="let char of categorizedCharacters">
+          <div class="card-img-wrap">
+            <img [src]="char.avatar_image_url || 'assets/default_avatar.jpg'" [alt]="char.name" class="char-portrait-img" (error)="char.avatar_image_url = 'assets/default_avatar.jpg'">
+          </div>
+          <div class="card-body">
+            <h3 class="char-name">{{ char.name }}</h3>
+            <p class="char-book">De: {{ char.book_title || 'Historia Literatus' }}</p>
+            <div class="card-actions">
+              <button class="btn-learn" (click)="goToBook(char.book_slug)">
+                Conocer personaje →
+              </button>
+              <button class="btn-chat" (click)="openChat(char)">
+                💬 Hablar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CONVERSA CON LOS PERSONAJES (Habla con ellos) -->
+    <section class="hub-section conversation-showcase-section" *ngIf="selectedChatCharacter">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">💬 INTERACCIÓN MÁGICA CON IA</span>
+          <h2 class="section-title">Habla con ellos</h2>
+          <p class="section-subtitle">No solo los leas. Pregúntales qué piensan.</p>
+        </div>
+      </div>
+
+      <div class="conversation-card">
+        <div class="chat-mockup-header">
+          <div class="mockup-avatar">
+            <img [src]="selectedChatCharacter.avatar_image_url || 'assets/default_avatar.jpg'" [alt]="selectedChatCharacter.name">
+          </div>
+          <div class="mockup-info">
+            <h3>🎭 Personaje: {{ selectedChatCharacter.name }}</h3>
+            <span class="status-indicator">🟢 En línea • Listo para conversar</span>
+          </div>
+        </div>
+
+        <div class="chat-mockup-body">
+          <div class="chat-bubble assistant-bubble">
+            <span class="bubble-sender">{{ selectedChatCharacter.name }}:</span>
+            <p>{{ selectedChatCharacter.sample_dialogue || '¡Hola! Es un honor conocerte. ¿Qué aventuras te gustaría descubrir hoy?' }}</p>
+          </div>
+          <div class="chat-bubble user-bubble">
+            <span class="bubble-sender">Tú:</span>
+            <p>¿Qué secreto se oculta en tu historia?</p>
+          </div>
+        </div>
+
+        <div class="chat-mockup-footer">
+          <button class="start-chat-btn" (click)="openChat(selectedChatCharacter)">
+            💬 Hablar con {{ selectedChatCharacter.name }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. PERSONAJE + LIBRO (Conexión de lectura) -->
+    <section class="hub-section book-connection-section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">📚 DE LA PANTALLA AL LIBRO</span>
+          <h2 class="section-title">Descubre sus historias</h2>
+          <p class="section-subtitle">Conoce al personaje y sumérgete en el libro original de donde proviene.</p>
+        </div>
+      </div>
+
+      <div class="book-connection-grid">
+        <div class="connection-card" *ngFor="let char of featuredCharacters.slice(0, 4)">
+          <div class="char-mini-thumb">
+            <img [src]="char.avatar_image_url || 'assets/default_avatar.jpg'" [alt]="char.name">
+          </div>
+          <div class="connection-flow">
+            <span class="char-name-label">{{ char.name }}</span>
+            <span class="arrow-sep">↓</span>
+            <span class="book-title-label">📖 {{ char.book_title || 'Libro de origen' }}</span>
+          </div>
+          <button class="explore-story-btn" (click)="goToBook(char.book_slug)">
+            Explorar historia →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. PERSONAJES NUEVOS / RECIENTES -->
+    <section class="hub-section" *ngIf="recentCharacters.length > 0">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">✨ NOVEDADES & CONVERSACIONES</span>
+          <h2 class="section-title">Nuevos personajes & Recientes</h2>
+          <p class="section-subtitle">Descubre quién acaba de llegar a la biblioteca o continúa tu chat.</p>
+        </div>
+      </div>
+
+      <div class="horizontal-scroll">
+        <div class="character-card mini-card" *ngFor="let char of recentCharacters" (click)="openChat(char)">
+          <div class="card-img-wrap">
+            <img [src]="char.avatar_image_url || 'assets/default_avatar.jpg'" [alt]="char.name" class="char-portrait-img">
+          </div>
+          <div class="card-body">
+            <h4 class="char-name">{{ char.name }}</h4>
+            <span class="btn-chat-sm">💬 Continuar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</div>

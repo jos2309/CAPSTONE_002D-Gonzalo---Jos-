@@ -1,0 +1,222 @@
+$bg-main: #F4EEE0;
+$bg-sec: #EAF3E8;
+$text-main: #33403A;
+$text-sec: #6E7C74;
+$primary: #2F8F6E;
+$secondary: #4A90A4;
+$accent-cta: #FF9F5B;
+$badge-reward: #FFD166;
+$success: #52B788;
+$alert: #E0575B;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: $bg-main;
+}
+
+.welcome-container {
+  width: 100%;
+  max-width: 1350px;
+  margin: 0 auto;
+  padding: 1rem 1.2rem;
+  box-sizing: border-box;
+
+  .header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+
+    .header-badge {
+      display: inline-block;
+      background: #ffffff;
+      color: $primary;
+      border: 1px solid rgba(47, 143, 110, 0.3);
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+      font-weight: 900;
+      color: $text-main;
+      margin: 0 0 0.3rem 0;
+    }
+
+    p {
+      color: $text-sec;
+      font-size: clamp(0.88rem, 1.4vw, 1rem);
+      font-weight: 600;
+      margin: 0 auto;
+    }
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1rem;
+
+    @media (min-width: 1100px) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 0.75rem;
+    }
+  }
+
+  /* BASE DE TARJETAS */
+  .game-card {
+    position: relative;
+    border-radius: 20px;
+    padding: 1rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 12px rgba(51, 64, 58, 0.04);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover:not(.disabled) {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(51, 64, 58, 0.1);
+    }
+
+    &.disabled {
+      opacity: 0.75;
+      background: #eae5d8 !important;
+      border-color: #ded8c8 !important;
+      border-bottom-color: #ced8c8 !important;
+    }
+
+    .card-status-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #fef2f2;
+      color: $alert;
+      border: 1px solid rgba(224, 87, 91, 0.3);
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 0.2rem 0.55rem;
+      border-radius: 8px;
+    }
+
+    .icon-bubble {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.6rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+
+      .icon {
+        font-size: 1.6rem;
+      }
+    }
+
+    .card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+
+      h2 {
+        font-size: 0.98rem;
+        font-weight: 800;
+        color: $text-main;
+        margin: 0 0 0.3rem 0;
+        line-height: 1.25;
+      }
+
+      p {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: $text-sec;
+        margin: 0;
+        line-height: 1.35;
+      }
+    }
+
+    .btn-play {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: all 0.1s ease-in-out;
+      cursor: pointer;
+
+      background: linear-gradient(180deg, #ffad73 0%, $accent-cta 100%);
+      color: #ffffff;
+      border: 2px solid $accent-cta;
+      border-bottom: 4px solid #e57e38;
+      box-shadow: 0 4px 10px rgba(255, 159, 91, 0.25);
+
+      &:hover:not(.btn-disabled) {
+        transform: translateY(-2px);
+        background: linear-gradient(180deg, $accent-cta 0%, #f78d43 100%);
+      }
+
+      &:active:not(.btn-disabled) {
+        transform: translateY(2px);
+        border-bottom-width: 2px;
+      }
+
+      &.btn-disabled {
+        background: #d8d2c4;
+        color: $text-sec;
+        border: 2px solid #c8c2b4;
+        border-bottom: 3px solid #b4aeA0;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+
+    /* COLORES DE FONDO DIVERSIFICADOS PARA CADA TEMÁTICA */
+    &.theme-1 {
+      background: #EBF5F8;
+      border-color: #D0E4EC;
+      border-bottom: 5px solid #BACED6;
+    }
+
+    &.theme-2 {
+      background: #EAF3E8;
+      border-color: #CDE2CC;
+      border-bottom: 5px solid #B5CDB4;
+    }
+
+    &.theme-3 {
+      background: #FAF3E6;
+      border-color: #F0E1C8;
+      border-bottom: 5px solid #DFCBB0;
+    }
+
+    &.theme-4 {
+      background: #F5EEF8;
+      border-color: #E2D2ED;
+      border-bottom: 5px solid #CDBAD8;
+    }
+
+    &.theme-5 {
+      background: #FAF0E6;
+      border-color: #F3D8C5;
+      border-bottom: 5px solid #DEC0AC;
+    }
+  }
+}

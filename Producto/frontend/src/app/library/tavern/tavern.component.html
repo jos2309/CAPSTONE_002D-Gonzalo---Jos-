@@ -1,0 +1,241 @@
+<div class="tavern-wrapper">
+
+  <!-- PARTÍCULAS MÁGICAS -->
+  <div class="particles-field" aria-hidden="true">
+    <span class="particle p1">✨</span>
+    <span class="particle p2">📖</span>
+    <span class="particle p3">🧪</span>
+    <span class="particle p4">🪶</span>
+    <span class="particle p5">🪙</span>
+    <span class="particle p6">✨</span>
+    <span class="particle p7">💬</span>
+    <span class="particle p8">⭐</span>
+  </div>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="hero-section reveal">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-star">✨</span>
+      <span>BIENVENIDO A LA TABERNA</span>
+      <span class="eyebrow-star">✨</span>
+    </div>
+    
+    <h1 class="hero-title">La Taberna de Tinta</h1>
+    <p class="hero-subtitle">
+      Consigue tinta para continuar tu aventura junto a personajes inolvidables.
+    </p>
+
+    <!-- Mascota / Guía Mágico -->
+    <div class="wizard-guide-box">
+      <div class="wizard-avatar">🧙‍♂️</div>
+      <div class="wizard-speech-bubble">
+        <p class="speech-greeting">¡Bienvenido aventurero!</p>
+        <p class="speech-question">¿Cuánta tinta necesitas para tu próxima historia?</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ ¿QUÉ ES LA TINTA? ═══════════ -->
+  <section class="ink-explanation-section reveal" aria-label="¿Qué es la Tinta?">
+    <div class="explanation-header">
+      <span class="section-kicker">🧪 RECURSO MÁGICO</span>
+      <h2 class="section-title">¿Qué es la Tinta?</h2>
+      <p class="explanation-text">
+        La Tinta es el recurso que te permite continuar tus aventuras dentro de LiteratusNovelist.
+      </p>
+    </div>
+
+    <div class="use-cases-grid">
+      <div class="use-case-card">
+        <div class="use-icon">💬</div>
+        <h4>Conversaciones</h4>
+        <p>Habla en tiempo real con figuras literarias.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="use-icon">📖</div>
+        <h4>Historias</h4>
+        <p>Retoma tus lecturas donde las dejaste.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="use-icon">🗺️</div>
+        <h4>Nuevos caminos</h4>
+        <p>Elige decisiones alternativas en la trama.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="use-icon">⭐</div>
+        <h4>Recompensas</h4>
+        <p>Desbloquea finales y secretos narrativos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ RESERVA + PERGAMINO DE RECOMPENSA ═══════════ -->
+  <section class="top-row reveal">
+
+    <!-- TU RESERVA DE TINTA -->
+    <div class="balance-card">
+      <div class="balance-inner">
+        <div class="balance-header-row">
+          <span class="balance-label">TU RESERVA DE TINTA</span>
+        </div>
+        <div class="balance-counter">
+          <div class="flask-icon-wrap">
+            <span class="flask-emoji">🧪</span>
+            <div class="ink-glow-ring"></div>
+          </div>
+          <div class="counter-text">
+            <span class="balance-number">{{ displayBalance }}</span>
+            <span class="balance-unit">TINTA</span>
+          </div>
+        </div>
+        <p class="balance-hint" *ngIf="isLoggedIn()">
+          Utiliza tu tinta para conversar con personajes y desbloquear historias.
+        </p>
+        <p class="balance-hint hint-login" *ngIf="!isLoggedIn()">
+          Inicia sesión para ver tu reserva de tinta.
+          <a routerLink="/login" class="login-link">Iniciar sesión →</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- PERGAMINO DE RECOMPENSA -->
+    <div class="ad-card" [class.is-loading]="adLoading">
+      <div class="ad-inner">
+        <div class="ad-badge-header">
+          <span class="scroll-icon">📜</span>
+          <h3>Pergamino de Recompensa</h3>
+        </div>
+        <p class="ad-text">Completa una pequeña misión y consigue tinta adicional para tu aventura.</p>
+
+        <button class="btn-reward" (click)="watchAd()" [disabled]="adLoading" id="watch-ad-btn">
+          <span *ngIf="!adLoading">✨ Reclamar +10 Tinta</span>
+          <span *ngIf="adLoading">Visualizando... ({{ adTimer }}s)</span>
+        </button>
+
+        <div class="progress-track" *ngIf="adLoading" role="progressbar">
+          <div class="progress-fill" [style.width.%]="(5 - adTimer) * 20"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════ MISIÓN DE HOY (MISIÓN DIARIA) ═══════════ -->
+  <section class="daily-mission-section reveal">
+    <div class="daily-mission-card">
+      <div class="mission-badge-icon">✨</div>
+      <div class="mission-content">
+        <h3>Misión de hoy</h3>
+        <p>Lee un capítulo y descubre una nueva aventura.</p>
+      </div>
+      <button class="btn-mission" routerLink="/catalog">Ir a explorar →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ PAQUETES DE TINTA (OBJETOS DE AVENTURA) ═══════════ -->
+  <section class="chests-section reveal">
+    <div class="section-header center">
+      <span class="section-kicker">🪙 OBJETOS COLECCIONABLES</span>
+      <h2 class="section-title">Escoge tus paquetes de tinta</h2>
+      <p class="section-subtitle">Consigue recursos para continuar explorando nuevos mundos.</p>
+    </div>
+
+    <div class="chests-grid">
+
+      <!-- PAQUETE 1: Bolsa del Explorador -->
+      <div class="chest-card chest-card-1">
+        <div class="card-top">
+          <div class="chest-illustration">🧭</div>
+        </div>
+        <div class="chest-body">
+          <h3 class="chest-name">Bolsa del Explorador</h3>
+          <div class="chest-amount-box">
+            <span class="amount-num">500</span>
+            <span class="amount-label">TINTA</span>
+          </div>
+          <p class="chest-tagline">"Comienza tu aventura."</p>
+        </div>
+        <button class="btn-buy" (click)="buyChest(chests[0])" id="buy-chest-0">
+          Obtener por {{ chests[0].price }}
+        </button>
+      </div>
+
+      <!-- PAQUETE 2: Mochila del Aventurero (Popular) -->
+      <div class="chest-card chest-card-2 featured">
+        <div class="chest-badge">⭐ MÁS POPULAR</div>
+        <div class="card-top">
+          <div class="chest-illustration">📚</div>
+        </div>
+        <div class="chest-body">
+          <h3 class="chest-name">Mochila del Aventurero</h3>
+          <div class="chest-amount-box">
+            <span class="amount-num">1500</span>
+            <span class="amount-label">TINTA</span>
+          </div>
+          <p class="chest-tagline">"La favorita de los lectores."</p>
+        </div>
+        <button class="btn-buy btn-buy-featured" (click)="buyChest(chests[1])" id="buy-chest-1">
+          Obtener por {{ chests[1].price }}
+        </button>
+      </div>
+
+      <!-- PAQUETE 3: Cofre del Gran Lector (Mejor Valor) -->
+      <div class="chest-card chest-card-3 master">
+        <div class="chest-badge value-badge">⭐ MEJOR VALOR</div>
+        <div class="card-top">
+          <div class="chest-illustration">🏰</div>
+        </div>
+        <div class="chest-body">
+          <h3 class="chest-name">Cofre del Gran Lector</h3>
+          <div class="chest-amount-box">
+            <span class="amount-num">5000</span>
+            <span class="amount-label">TINTA</span>
+          </div>
+          <p class="chest-tagline">"Para grandes aventuras."</p>
+        </div>
+        <button class="btn-buy" (click)="buyChest(chests[2])" id="buy-chest-2">
+          Obtener por {{ chests[2].price }}
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ BENEFICIOS (CON TU TINTA PODRÁS) ═══════════ -->
+  <section class="value-section reveal">
+    <div class="section-header center">
+      <span class="section-kicker">✨ BENEFICIOS</span>
+      <h2 class="section-title">Con tu tinta podrás:</h2>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">💬</div>
+        <h3>CONVERSAR</h3>
+        <p>Habla con personajes literarios en tiempo real.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📖</div>
+        <h3>CONTINUAR</h3>
+        <p>Retoma tus historias y capítulos favoritos.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🗺️</div>
+        <h3>EXPLORAR</h3>
+        <p>Descubre nuevas rutas y decisiones en la trama.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">⭐</div>
+        <h3>DESBLOQUEAR</h3>
+        <p>Descubre nuevos finales y secretos escondidos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER NAVEGACIÓN -->
+  <footer class="tavern-footer">
+    <button class="btn-secondary" routerLink="/catalog">← Volver al Catálogo</button>
+  </footer>
+
+</div>
+

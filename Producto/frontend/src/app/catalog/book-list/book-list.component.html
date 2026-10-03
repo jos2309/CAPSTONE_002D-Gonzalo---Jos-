@@ -1,0 +1,236 @@
+<div class="catalog-wrapper">
+  
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       1. HERO DEL CATÁLOGO (SI NO ES HOME)
+       ────────────────────────────────────────────────────────────────────────── -->
+  <header class="catalog-hero" *ngIf="!isHome">
+    <div class="hero-badge-tag">
+      <span>🗺️ Biblioteca de Aventuras</span>
+    </div>
+
+    <h1 class="catalog-hero-title">EXPLORA EL CATÁLOGO</h1>
+    <p class="catalog-hero-subtitle">Descubre tu próxima aventura.</p>
+
+    <!-- Buscador Grande Principal -->
+    <div class="search-section">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          [value]="searchTerm"
+          placeholder="¿Qué historia quieres descubrir?" 
+          (keyup)="onSearch($event)" 
+          class="catalog-search-input">
+        <button class="search-clear-btn" *ngIf="searchTerm" (click)="resetSearch()">✕</button>
+      </div>
+    </div>
+
+    <!-- Píldoras de Categorías con Micro-Iconos -->
+    <div class="categories-section">
+      <div class="categories-scroll">
+        <button 
+          class="category-pill"
+          [class.active]="!activeCategory"
+          (click)="setCategory('')">
+          <span>🌟 Todos</span>
+        </button>
+        <button 
+          *ngFor="let cat of allSubcategories" 
+          class="category-pill"
+          [class.active]="activeCategory === cat.name"
+          (click)="setCategory(cat.name)">
+          <span class="pill-icon">{{ cat.icon }}</span>
+          <span>{{ cat.name }}</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="home-grid-header" *ngIf="isHome">
+    <h2>Títulos destacados para tu próxima aventura</h2>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       2. NUEVA SECCIÓN: HISTORIAS DESTACADAS (SI NO ES HOME Y HAY RESULTADOS)
+       ────────────────────────────────────────────────────────────────────────── -->
+  <section class="featured-adventures-section" *ngIf="!isHome && !isLoading && !errorMsg && featuredAdventures.length > 0 && !searchTerm && !activeCategory">
+    <div class="section-title-wrap">
+      <h2 class="featured-section-title">Historias destacadas</h2>
+      <p class="featured-section-subtitle">Grandes historias esperando ser descubiertas.</p>
+    </div>
+
+    <div class="featured-cards-grid">
+      <div 
+        *ngFor="let book of featuredAdventures" 
+        class="collectible-book-card"
+        (click)="goToBook(book.slug)">
+        
+        <div class="card-cover-box">
+          <span class="level-badge-tag">{{ book.level_badge || 'Nivel 1' }}</span>
+          <img 
+            [src]="book.cover_image || 'assets/default_cover.jpg'" 
+            [alt]="book.title" 
+            class="cover-img"
+            onerror="this.src='assets/default_cover.jpg'">
+          
+          <div class="card-hover-reveal">
+            <span class="hover-cta-btn">Ver historia →</span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-pills">
+            <span class="genre-pill">🗺️ {{ book.genre_name || 'Aventura' }}</span>
+            <span class="chapters-pill">📖 {{ book.chapters_count || 12 }} capítulos</span>
+          </div>
+
+          <h3 class="card-title">{{ book.title }}</h3>
+          <p class="card-author">{{ book.author_name || 'Clásico Universal' }}</p>
+
+          <button class="btn-card-action">
+            Ver historia →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       3. BARRA DE FILTROS & ORDENACIÓN
+       ────────────────────────────────────────────────────────────────────────── -->
+  <div class="filters-bar" *ngIf="!isHome && !isLoading && !errorMsg && books.length > 0">
+    <div class="filters-left">
+      <span class="filters-label">Filtrar por:</span>
+      <button class="filter-chip" [class.active]="!activeCategory" (click)="setCategory('')">Todos</button>
+      <button class="filter-chip" [class.active]="activeCategory === 'Acción y aventura'" (click)="setCategory('Acción y aventura')">Aventura</button>
+      <button class="filter-chip" [class.active]="activeCategory === 'Fantasía'" (click)="setCategory('Fantasía')">Fantasía</button>
+      <button class="filter-chip" [class.active]="activeCategory === 'Cuentos'" (click)="setCategory('Cuentos')">Cuentos</button>
+    </div>
+
+    <div class="filters-right">
+      <span class="sort-label">Ordenar por:</span>
+      <select class="sort-select" (change)="onOrderingChange($any($event.target).value)">
+        <option value="popularity" selected>Más populares ▼</option>
+        <option value="recent">Más recientes</option>
+        <option value="alphabetical">Alfabético (A-Z)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Contador de resultados -->
+  <div class="results-count-badge" *ngIf="!isLoading && (activeCategory || searchTerm) && books.length > 0">
+    <span>🔍 {{ totalCount }} historias encontradas{{ activeCategory ? ' en "' + activeCategory + '"' : '' }}</span>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       4. ESTADO DE CARGA (SKELETON LOADING 8 CARDS)
+       ────────────────────────────────────────────────────────────────────────── -->
+  <div class="grid-container" *ngIf="isLoading && !errorMsg">
+    <div class="collectible-book-card skeleton-card" *ngFor="let i of [1,2,3,4,5,6,7,8]">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-text title"></div>
+        <div class="skeleton-text author"></div>
+        <div class="skeleton-button"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       5. ESTADO DE ERROR ILUSTRADO
+       ────────────────────────────────────────────────────────────────────────── -->
+  <div class="illustrated-state-card error-state" *ngIf="errorMsg">
+    <div class="state-icon-bubble">
+      <span>📚✨</span>
+    </div>
+    <h3 class="state-title">Las estanterías están temporalmente cerradas</h3>
+    <p class="state-desc">Estamos intentando encontrar tus historias. Comprueba tu conexión y vuelve a intentarlo.</p>
+    <button class="btn-state-cta" (click)="retryFetch()">
+      Intentar nuevamente
+    </button>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       6. ESTADO VACÍO (NO RESULTS)
+       ────────────────────────────────────────────────────────────────────────── -->
+  <div class="illustrated-state-card empty-state" *ngIf="!isLoading && books.length === 0 && !errorMsg">
+    <div class="state-icon-bubble">
+      <span>🔎</span>
+    </div>
+    <h3 class="state-title">No encontramos esa aventura.</h3>
+    <p class="state-desc">Prueba con otro título, autor o categoría.</p>
+    <button class="btn-state-cta" (click)="resetSearch()">
+      Ver todos los libros
+    </button>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       7. GRID PRINCIPAL: "TODOS LOS LIBROS"
+       ────────────────────────────────────────────────────────────────────────── -->
+  <section class="all-books-section" *ngIf="!isLoading && books.length > 0">
+    <h2 class="main-grid-title" *ngIf="!isHome">Todos los libros</h2>
+
+    <div class="grid-container">
+      <div 
+        *ngFor="let book of books; let i = index"
+        class="collectible-book-card"
+        (click)="goToBook(book.slug)"
+        [style.animation-delay]="(i * 35) + 'ms'">
+        
+        <div class="card-cover-box">
+          <span class="level-badge-tag">{{ book.level_badge || 'Nivel 1' }}</span>
+          <span class="featured-star" *ngIf="book.is_featured">★ Destacado</span>
+
+          <img 
+            [src]="book.cover_image || 'assets/default_cover.jpg'" 
+            [alt]="book.title" 
+            class="cover-img"
+            onerror="this.src='assets/default_cover.jpg'">
+          
+          <div class="card-hover-reveal">
+            <span class="hover-cta-btn">Ver detalles →</span>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <div class="card-pills">
+            <span class="genre-pill">🗺️ {{ book.genre_name || 'Aventura' }}</span>
+            <span class="chapters-pill">📖 {{ book.chapters_count || 10 }} cap.</span>
+          </div>
+
+          <h3 class="card-title">{{ book.title }}</h3>
+          
+          <p class="card-synopsis">
+            {{ (book.synopsis && book.synopsis.length > 90) ? (book.synopsis | slice:0:90) + '...' : (book.synopsis || 'Una fascinante aventura esperándote en las páginas de este libro.') }}
+          </p>
+
+          <div class="card-footer-action">
+            <span class="btn-detail-link">
+              Ver detalles →
+            </span>
+          </div>
+        </div>
+      
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────
+       8. PAGINACIÓN ILUSTRADA
+       ────────────────────────────────────────────────────────────────────────── -->
+  <div *ngIf="!isLoading && totalPages > 1" class="pagination-bar">
+    <span class="results-count-text">{{ totalCount }} historias encontradas</span>
+    
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+        ← Anterior
+      </button>
+      <span class="page-indicator">Página {{ currentPage }} de {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+
+</div>

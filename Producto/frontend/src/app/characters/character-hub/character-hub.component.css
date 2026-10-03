@@ -1,0 +1,784 @@
+/* ══════════════════════════════════════════════════════════════════
+   GALERÍA DE PERSONAJES - LITERATUSNOVELIST
+   Paleta:
+   - Fondo principal: #FBF9F2
+   - Fondo secundario: #EAF3E8
+   - Texto principal: #33403A
+   - Texto secundario: #6E7C74
+   - Primario: #2F8F6E
+   - Secundario: #4A90A4
+   - CTA: #FF9F5B
+   - Logros: #FFD166
+   - Éxito: #52B788
+   - Alerta: #E0575B
+   ══════════════════════════════════════════════════════════════════ */
+
+.hub-container {
+  min-height: 100vh;
+  background-color: #FBF9F2;
+  color: #33403A;
+  font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 5rem;
+
+  /* Patrón de fondo sutil con marcas decorativas casi imperceptibles */
+  background-image: radial-gradient(#2F8F6E 0.75px, transparent 0.75px);
+  background-size: 28px 28px;
+  background-position: 0 0;
+}
+
+/* ═══ 1. HERO COMPACTO ═══ */
+.characters-hero {
+  background: linear-gradient(180deg, #EAF3E8 0%, #FBF9F2 100%);
+  padding: 2.25rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(47, 143, 110, 0.12);
+}
+
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.hero-text-content {
+  flex: 1;
+  max-width: 650px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #FFFFFF;
+  border: 1.5px solid #2F8F6E;
+  color: #2F8F6E;
+  padding: 0.3rem 0.9rem;
+  border-radius: 30px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.65rem;
+  box-shadow: 0 4px 10px rgba(47, 143, 110, 0.08);
+}
+
+.hero-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: clamp(2.1rem, 3.8vw, 2.8rem);
+  font-weight: 900;
+  color: #33403A;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  color: #6E7C74;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Ilustración decorativa flotante */
+.hero-illustration {
+  position: relative;
+  width: 140px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-floating-icons {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.float-icon {
+  position: absolute;
+  font-size: 2.2rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  animation: floatAnim 3s infinite ease-in-out alternate;
+}
+
+.icon-book { top: 10px; left: 10px; animation-delay: 0s; }
+.icon-mask { top: 15px; right: 15px; animation-delay: 0.6s; }
+.icon-star { bottom: 15px; left: 25px; font-size: 1.8rem; animation-delay: 1.2s; }
+.icon-bubble { bottom: 10px; right: 20px; animation-delay: 1.8s; }
+
+/* ═══ 2. BUSCADOR & ACCIONES RÁPIDAS ═══ */
+.search-section {
+  max-width: 900px;
+  margin: 1.5rem auto 2.5rem;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.search-bar-container {
+  width: 100%;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 2px solid #2F8F6E;
+  border-radius: 40px;
+  padding: 0.4rem 0.6rem 0.4rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(47, 143, 110, 0.12);
+  transition: all 0.2s ease;
+}
+
+.search-box:focus-within {
+  border-color: #FF9F5B;
+  box-shadow: 0 10px 28px rgba(255, 159, 91, 0.22);
+}
+
+.search-icon {
+  font-size: 1.2rem;
+  margin-right: 0.6rem;
+  user-select: none;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #33403A;
+  font-family: inherit;
+  font-weight: 600;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #9AA8A0;
+}
+
+.clear-btn {
+  background: #EAF3E8;
+  border: none;
+  color: #6E7C74;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background: #FF9F5B;
+  color: #FFFFFF;
+}
+
+/* Píldoras de Acciones Rápidas */
+.quick-actions-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.quick-pill {
+  background: #EAF3E8;
+  border: 1.5px solid #2F8F6E;
+  color: #33403A;
+  padding: 0.45rem 1rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-pill:hover {
+  background: #FFFFFF;
+  border-color: #FF9F5B;
+  transform: translateY(-2px);
+}
+
+.quick-pill.active {
+  background: #2F8F6E;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(47, 143, 110, 0.25);
+}
+
+/* ═══ 3. MAIN CONTENT & SECCIONES ═══ */
+.hub-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.hub-section {
+  width: 100%;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-kicker {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #4A90A4;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: #33403A;
+  margin: 0;
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: #6E7C74;
+  margin: 0.25rem 0 0 0;
+}
+
+/* ═══ 4. GRID DE PERSONAJES & TARJETAS ═══ */
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.character-card {
+  background: #FFFFFF;
+  border: 2px solid #E2EAE5;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.character-card:hover {
+  transform: translateY(-6px);
+  border-color: #2F8F6E;
+  box-shadow: 0 16px 36px rgba(47, 143, 110, 0.14);
+}
+
+.card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background-color: #EAF3E8;
+  overflow: hidden;
+}
+
+.char-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+}
+
+.character-card:hover .char-portrait-img {
+  transform: scale(1.06);
+}
+
+.genre-pill, .book-pill {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #4A90A4;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.char-name {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #33403A;
+  margin: 0 0 0.25rem 0;
+}
+
+.char-book {
+  font-size: 0.85rem;
+  color: #4A90A4;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.char-desc {
+  font-size: 0.85rem;
+  color: #6E7C74;
+  margin: 0 0 1.25rem 0;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Botones de Acción en Tarjeta */
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-learn {
+  flex: 1;
+  background-color: #EAF3E8;
+  color: #2F8F6E;
+  border: 1px solid rgba(47, 143, 110, 0.3);
+  padding: 0.55rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-learn:hover {
+  background-color: #2F8F6E;
+  color: #FFFFFF;
+}
+
+.btn-chat {
+  background-color: #FF9F5B;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.55rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(255, 159, 91, 0.25);
+}
+
+.btn-chat:hover {
+  background-color: #E88E4B;
+  transform: scale(1.03);
+}
+
+/* ═══ 5. CATEGORÍAS (BARRA HORIZONTAL) ═══ */
+.categories-horizontal-bar {
+  display: flex;
+  gap: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.5rem;
+  scroll-behavior: smooth;
+}
+
+.cat-chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5CE;
+  color: #33403A;
+  padding: 0.5rem 1.1rem;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-chip:hover {
+  border-color: #2F8F6E;
+  background: #EAF3E8;
+}
+
+.cat-chip.active {
+  background: #2F8F6E;
+  color: #FFFFFF;
+  border-color: #2F8F6E;
+  box-shadow: 0 4px 14px rgba(47, 143, 110, 0.25);
+}
+
+/* ═══ 6. CONVERSA CON LOS PERSONAJES (MOCKUP INTERACTIVO) ═══ */
+.conversation-showcase-section {
+  background: #FFFFFF;
+  border: 2px solid #EAF3E8;
+  border-radius: 28px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+}
+
+.conversation-card {
+  background: #FBF9F2;
+  border: 2px solid #2F8F6E;
+  border-radius: 24px;
+  padding: 1.75rem;
+  max-width: 650px;
+  margin: 1rem auto 0;
+  box-shadow: 0 10px 28px rgba(47, 143, 110, 0.1);
+}
+
+.chat-mockup-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #EAF3E8;
+}
+
+.mockup-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2.5px solid #2F8F6E;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.mockup-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mockup-info h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #33403A;
+  margin: 0;
+}
+
+.status-indicator {
+  font-size: 0.78rem;
+  color: #52B788;
+  font-weight: 700;
+}
+
+.chat-mockup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chat-bubble {
+  padding: 0.85rem 1.1rem;
+  border-radius: 18px;
+  max-width: 85%;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.assistant-bubble {
+  background-color: #FFFFFF;
+  color: #33403A;
+  border: 1.5px solid #2F8F6E;
+  border-top-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.user-bubble {
+  background-color: #2F8F6E;
+  color: #FFFFFF;
+  border-top-right-radius: 4px;
+  align-self: flex-end;
+}
+
+.bubble-sender {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+  opacity: 0.9;
+}
+
+.chat-mockup-footer {
+  text-align: center;
+}
+
+.start-chat-btn {
+  background-color: #FF9F5B;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 159, 91, 0.35);
+  transition: all 0.2s ease;
+}
+
+.start-chat-btn:hover {
+  background-color: #E88E4B;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(255, 159, 91, 0.45);
+}
+
+/* ═══ 7. PERSONAJE + LIBRO (CONEXIÓN LECTURA) ═══ */
+.book-connection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.connection-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2EAE5;
+  border-radius: 20px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.85rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.char-mini-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #2F8F6E;
+  overflow: hidden;
+}
+
+.char-mini-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.connection-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.char-name-label {
+  font-weight: 800;
+  color: #33403A;
+  font-size: 0.95rem;
+}
+
+.arrow-sep {
+  color: #FF9F5B;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.book-title-label {
+  font-size: 0.88rem;
+  color: #4A90A4;
+  font-weight: 700;
+}
+
+.explore-story-btn {
+  margin-top: auto;
+  background: #EAF3E8;
+  color: #2F8F6E;
+  border: 1.5px solid #2F8F6E;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.explore-story-btn:hover {
+  background: #2F8F6E;
+  color: #FFFFFF;
+}
+
+/* HORIZONTAL SCROLL FOR RECENT */
+.horizontal-scroll {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+}
+
+.mini-card {
+  flex-shrink: 0;
+  width: 170px;
+}
+
+.mini-card .card-img-wrap {
+  height: 160px;
+}
+
+.btn-chat-sm {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #FF9F5B;
+}
+
+/* ═══ 8. ESTADOS VACÍO, CARGA & ERROR ═══ */
+.no-results-card {
+  text-align: center;
+  background: #FFFFFF;
+  border: 2px dashed #CBD5CE;
+  border-radius: 24px;
+  padding: 3.5rem 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.no-results-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.no-results-card h3 {
+  font-size: 1.25rem;
+  color: #33403A;
+  margin: 0 0 0.5rem 0;
+}
+
+.no-results-card p {
+  color: #6E7C74;
+  margin: 0 0 1.5rem 0;
+}
+
+.reset-search-btn {
+  background-color: #2F8F6E;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.error-banner {
+  background-color: #FFF9F7;
+  border: 2px solid #FF9F5B;
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-emoji { font-size: 3.5rem; }
+.error-title { font-family: 'Fredoka', sans-serif; font-size: 1.4rem; color: #33403A; margin: 0; }
+.error-desc { color: #6E7C74; margin: 0; }
+
+.retry-btn {
+  background-color: #FF9F5B;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.75rem 1.75rem;
+  border-radius: 30px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* SKELETON CARDS */
+.skeleton-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.skeleton-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1.5px solid #EAF3E8;
+  overflow: hidden;
+}
+
+.shimmer-img {
+  width: 100%;
+  height: 200px;
+  background: #EAF3E8;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.shimmer-body {
+  padding: 1.25rem;
+}
+
+.shimmer-line {
+  background: #EAF3E8;
+  height: 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.shimmer-line.title { width: 70%; height: 18px; }
+.shimmer-line.text { width: 90%; }
+.shimmer-line.short { width: 40%; }
+
+/* ANIMACIONES */
+@keyframes floatAnim {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-8px) rotate(4deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero-inner { flex-direction: column; text-align: center; gap: 1rem; }
+  .hero-illustration { display: none; }
+  .character-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .conversation-card { padding: 1.25rem; }
+  .chat-bubble { max-width: 95%; }
+}
+
+@media (max-width: 480px) {
+  .character-grid { grid-template-columns: 1fr; }
+  .quick-actions-pills { gap: 0.4rem; }
+  .quick-pill { font-size: 0.78rem; padding: 0.35rem 0.75rem; }
+}
+

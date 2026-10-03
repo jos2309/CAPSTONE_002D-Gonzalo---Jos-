@@ -1,0 +1,679 @@
+:host {
+  /* ──────────────────────────────────────────────────────────────────────────
+     PALETA DE COLORES CORPORATIVOS OFICIAL
+     ────────────────────────────────────────────────────────────────────────── */
+  --bg-main: #FBF9F2;
+  --bg-secondary: #EAF3E8;
+  --text-main: #33403A;
+  --text-secondary: #6E7C74;
+  --color-primary: #2F8F6E;
+  --color-secondary: #4A90A4;
+  --color-accent: #FF9F5B;
+  --color-badge: #FFD166;
+  --color-success: #52B788;
+  --color-alert: #E0575B;
+
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+}
+
+.catalog-wrapper {
+  padding: 32px 24px 60px 24px;
+  max-width: 1320px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   1. HERO DEL CATÁLOGO
+   ────────────────────────────────────────────────────────────────────────── */
+.catalog-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.hero-badge-tag {
+  background-color: var(--bg-secondary);
+  color: var(--color-primary);
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.catalog-hero-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.catalog-hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  margin: 0 0 28px 0;
+}
+
+/* Buscador Principal */
+.search-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  pointer-events: none;
+}
+
+.catalog-search-input {
+  width: 100%;
+  padding: 16px 48px 16px 56px;
+  border-radius: 30px;
+  background: #FFFFFF;
+  border: 2px solid var(--color-primary);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 1.08rem;
+  font-weight: 500;
+  outline: none;
+  box-shadow: 0 6px 20px rgba(47, 143, 110, 0.08);
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.catalog-search-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(255, 159, 91, 0.25);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Píldoras de Categorías con Scroll Horizontal */
+.categories-section {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.categories-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 4px 14px 4px;
+  scrollbar-width: thin;
+}
+
+.category-pill {
+  white-space: nowrap;
+  background: #FFFFFF;
+  color: var(--text-main);
+  border: 1.5px solid rgba(47, 143, 110, 0.25);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.category-pill:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.category-pill.active {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(47, 143, 110, 0.25);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   2. HISTORIAS DESTACADAS (SECCIÓN ESPECIAL)
+   ────────────────────────────────────────────────────────────────────────── */
+.featured-adventures-section {
+  margin-bottom: 50px;
+}
+
+.section-title-wrap {
+  margin-bottom: 24px;
+}
+
+.featured-section-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+}
+
+.featured-section-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.featured-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* Tarjetas Coleccionables */
+.collectible-book-card {
+  background-color: #FFFFFF;
+  border: 2px solid var(--color-primary);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(47, 143, 110, 0.08);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.collectible-book-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(47, 143, 110, 0.18);
+  border-color: var(--color-accent);
+}
+
+.card-cover-box {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+}
+
+.level-badge-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background-color: var(--color-badge);
+  color: #2D2411;
+  font-weight: 800;
+  font-size: 0.76rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.featured-star {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.collectible-book-card:hover .cover-img {
+  transform: scale(1.08);
+}
+
+.card-hover-reveal {
+  position: absolute;
+  inset: 0;
+  background: rgba(47, 143, 110, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.collectible-book-card:hover .card-hover-reveal {
+  opacity: 1;
+}
+
+.hover-cta-btn {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 10px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 #D97736;
+}
+
+.card-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.card-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.genre-pill {
+  background-color: var(--bg-secondary);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.chapters-pill {
+  background-color: #EBF4F7;
+  color: var(--color-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.card-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 4px 0 0 0;
+  line-height: 1.35;
+}
+
+.card-author {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.card-synopsis {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 4px 0 10px 0;
+}
+
+.btn-card-action {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #D97736;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+}
+
+.btn-card-action:hover {
+  background-color: #E88E4A;
+  transform: translateY(-1px);
+}
+
+.card-footer-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn-detail-link {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  transition: gap 0.2s ease;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   3. FILTROS & ORDENACIÓN
+   ────────────────────────────────────────────────────────────────────────── */
+.filters-bar {
+  background-color: var(--bg-secondary);
+  border: 1.5px solid rgba(47, 143, 110, 0.3);
+  border-radius: 16px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.filters-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filters-label, .sort-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.filter-chip {
+  background-color: #FFFFFF;
+  border: 1.5px solid rgba(47, 143, 110, 0.25);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.filter-chip.active {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
+}
+
+.filters-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-select {
+  background-color: #FFFFFF;
+  border: 1.5px solid rgba(47, 143, 110, 0.3);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.results-count-badge {
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4. GRID PRINCIPAL ("TODOS LOS LIBROS")
+   ────────────────────────────────────────────────────────────────────────── */
+.all-books-section {
+  margin-top: 10px;
+}
+
+.main-grid-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   5. ESTADO DE ERROR ILUSTRADO & ESTADO VACÍO
+   ────────────────────────────────────────────────────────────────────────── */
+.illustrated-state-card {
+  background-color: var(--bg-main);
+  border: 2.5px solid var(--color-primary);
+  border-radius: 22px;
+  padding: 44px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 540px;
+  margin: 40px auto;
+  box-shadow: 0 10px 30px rgba(47, 143, 110, 0.1);
+}
+
+.state-icon-bubble {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  margin-bottom: 18px;
+}
+
+.state-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 8px 0;
+}
+
+.state-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.btn-state-cta {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #D97736;
+  transition: all 0.2s ease;
+}
+
+.btn-state-cta:hover {
+  background-color: #E88E4A;
+  transform: translateY(-2px);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   6. SKELETON LOADING
+   ────────────────────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-img {
+  height: 230px;
+  background: #EAF0E9;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-text {
+  background: #EAF0E9;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-text.title { height: 22px; width: 80%; }
+.skeleton-text.author { height: 16px; width: 50%; }
+.skeleton-button { height: 38px; background: #EAF0E9; border-radius: 10px; }
+
+.skeleton-img::after, .skeleton-text::after, .skeleton-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   7. PAGINACIÓN ILUSTRADA
+   ────────────────────────────────────────────────────────────────────────── */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 48px;
+  padding: 16px 24px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--color-primary);
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(47, 143, 110, 0.08);
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.results-count-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.page-btn {
+  padding: 9px 20px;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #D97736;
+  transition: all 0.15s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: #E88E4A;
+  transform: translateY(-1px);
+}
+
+.page-btn:disabled {
+  background-color: #E2E8F0;
+  color: #94A3B8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   RESPONSIVE DESIGN (DESKTOP, TABLET & MOBILE)
+   ────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .featured-cards-grid, .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .catalog-wrapper {
+    padding: 24px 16px 40px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .featured-cards-grid, .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+}
