@@ -64,14 +64,26 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 class AddInkView(APIView):
     """
     Endpoint POST /users/me/add_ink/
-    Agrega tinta al usuario tras ver un anuncio.
+    Agrega tinta al usuario tras ver un anuncio o como recompensa del sistema.
+    Restringido para prevenir inyección arbitraria de tinta por usuarios no administradores.
     """
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        # En una app real aquí se validaría un token de recompensa del anuncio
-        amount = int(request.data.get('amount', 10))
-        
+        try:
+            raw_amount = int(request.data.get('amount', 10))
+        except (TypeError, ValueError):
+            raw_amount = 10
+
+        # Si el usuario NO es staff/admin, limitar la recarga máxima a 10 de tinta por anuncio/llamada
+        if not request.user.is_staff:
+            if raw_amount <= 0 or raw_amount > 10:
+                amount = 10
+            else:
+                amount = raw_amount
+        else:
+            amount = raw_amount
+
         profile = request.user.profile
         profile.ink_balance += amount
         profile.save()
@@ -80,6 +92,7 @@ class AddInkView(APIView):
             'message': f'¡Has ganado {amount} de Tinta!',
             'ink_balance': profile.ink_balance
         }, status=status.HTTP_200_OK)
+
 
 
 class SpendInkView(APIView):

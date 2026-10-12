@@ -86,3 +86,4 @@ uritemplate
 urllib3
 websockets
 gunicorn
+whitenoise

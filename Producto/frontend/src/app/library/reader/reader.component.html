@@ -5,14 +5,22 @@
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <header class="toolbar glass-panel" [class.hidden]="isToolbarHidden">
 
-    <!-- Izquierda: Volver + Info + Personajes -->
+    <!-- Izquierda: Volver + Navegación Rápida + Info + Personajes -->
     <div class="toolbar-left">
       <button class="back-btn" routerLink="/library" title="Volver a mi biblioteca">
         <span class="icon">✕</span>
       </button>
+      <div class="chapter-quick-nav">
+        <button class="quick-nav-btn" (click)="previousPage()" [disabled]="currentPage <= 1" title="Capítulo Anterior">
+          ◀
+        </button>
+        <button class="quick-nav-btn" (click)="nextPage()" [disabled]="currentPage >= totalPages" title="Capítulo Siguiente">
+          ▶
+        </button>
+      </div>
       <div class="book-info">
         <span class="chapter-label">{{ chapterTitle }}</span>
-        <span class="progress-label">{{ currentPage - 1 > 0 ? 'Capítulo ' + (currentPage - 1) : 'Prólogo' }} · {{ currentPage }} de {{ totalPages }}</span>
+        <span class="progress-label">Capítulo {{ currentPage }} de {{ totalPages }}</span>
       </div>
       <!-- Trigger Panel de Personajes (izquierda) -->
       <button class="char-trigger-btn" (click)="toggleCharPanel()" title="Personajes IA"
@@ -39,10 +47,11 @@
       <!-- Selector de Tipo de Letra -->
       <div class="font-family-selector">
         <select class="font-family-dropdown" [value]="currentFontFamily" (change)="setFontFamily($any($event.target).value)" title="Tipografía de lectura">
-          <option value="serif">Serif</option>
-          <option value="sans">Outfit</option>
-          <option value="dyslexic">Comic Neue</option>
-          <option value="medieval">Cinzel</option>
+          <option value="lexend">✨ Lexend (Infantil)</option>
+          <option value="comic">🎨 Comic Neue (Infantil)</option>
+          <option value="opendyslexic">📖 OpenDyslexic (Accesible)</option>
+          <option value="serif">Serif Clásica</option>
+          <option value="sans">Outfit Sans</option>
           <option value="garamond">Garamond</option>
           <option value="georgia">Georgia</option>
           <option value="palatino">Palatino</option>
@@ -543,97 +552,170 @@
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- LIENZO DE LECTURA PRINCIPAL                                      -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- LIENZO DE LECTURA (renderizado nativo Angular para highlighting) -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
   <main class="reading-canvas html-reader" [ngClass]="'font-' + currentFontFamily" [class.tap-to-scroll-active]="tapToScrollActive" (scroll)="onCanvasScroll($event)" (click)="onCanvasClick($event)">
-    <!-- Título principal del capítulo -->
-    <!-- Título principal del capítulo con soporte para highlighting -->
-    <h1 class="chapter-title-main">
-      <ng-container *ngFor="let tok of titleTokens; trackBy: trackByToken">
-        <span *ngIf="tok.isWord"
-              [id]="'word-' + tok.idx"
-              class="word"
-              [class.active-word]="tok.idx === currentWordIndex"
-              (click)="onWordClick(tok.idx)">
-          <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
-          <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
-        </span>
-        <ng-container *ngIf="!tok.isWord && !tok.isImg">{{ tok.text }}</ng-container>
-        <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
-      </ng-container>
-      <!-- Fallback si no se encontró el título en el texto original -->
-      <ng-container *ngIf="titleTokens.length === 0">{{ chapterTitle }}</ng-container>
-    </h1>
 
-    <ng-container *ngFor="let block of renderedBlocks; trackBy: trackByBlock">
-
-      <!-- Imagen a nivel raíz (standalone) -->
-      <figure *ngIf="block.tag === 'img-block' && showSceneImages" class="chapter-image scene-image-container">
-        <img [src]="block.tokens[0].src" [alt]="block.tokens[0].alt || ''" loading="lazy" (click)="openImageModal(block.tokens[0].src)" class="scene-image">
-      </figure>
-
-      <h1 *ngIf="block.tag === 'h1'" class="chapter-heading">
-        <ng-container *ngFor="let sentence of block.sentences">
-          <span [class.active-paragraph-text]="isActiveSentence(sentence)">
-            <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
-              <span *ngIf="tok.isWord"
-                    [id]="'word-' + tok.idx"
-                    class="word"
-                    [class.active-word]="tok.idx === currentWordIndex"
-                    (click)="onWordClick(tok.idx)">
-                <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
-                <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
-              </span>
-              <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
-              <br *ngIf="tok.isBr">
-              <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
-            </ng-container>
+    <!-- HOJA ÚNICA DE LIBRO REAL (Desplazamiento Vertical Continuo) -->
+    <article class="book-page-sheet" *ngIf="chapters.length > 0">
+      
+      <!-- Título principal del capítulo -->
+      <h1 class="chapter-title-main">
+        <ng-container *ngFor="let tok of titleTokens; trackBy: trackByToken">
+          <span *ngIf="tok.isWord"
+                [id]="'word-' + tok.idx"
+                class="word"
+                [class.active-word]="tok.idx === currentWordIndex"
+                (click)="onWordClick(tok.idx)">
+            <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+            <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
           </span>
+          <ng-container *ngIf="!tok.isWord && !tok.isImg">{{ tok.text }}</ng-container>
+          <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
         </ng-container>
+        <!-- Fallback si no se encontró el título en el texto original -->
+        <ng-container *ngIf="titleTokens.length === 0">{{ chapterTitle }}</ng-container>
       </h1>
 
-      <h2 *ngIf="block.tag === 'h2'" class="chapter-heading">
-        <ng-container *ngFor="let sentence of block.sentences">
-          <span [class.active-paragraph-text]="isActiveSentence(sentence)">
-            <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
-              <span *ngIf="tok.isWord"
-                    [id]="'word-' + tok.idx"
-                    class="word"
-                    [class.active-word]="tok.idx === currentWordIndex"
-                    (click)="onWordClick(tok.idx)">
-                <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
-                <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
-              </span>
-              <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
-              <br *ngIf="tok.isBr">
-              <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
-            </ng-container>
-          </span>
-        </ng-container>
-      </h2>
+      <ng-container *ngFor="let block of renderedBlocks; trackBy: trackByBlock">
 
-      <p *ngIf="block.tag === 'p' || block.tag === 'div' || block.tag === 'blockquote'">
-        <ng-container *ngFor="let sentence of block.sentences">
-          <span [class.active-paragraph-text]="isActiveSentence(sentence)">
-            <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
-              <span *ngIf="tok.isWord"
-                    [id]="'word-' + tok.idx"
-                    class="word"
-                    [class.active-word]="tok.idx === currentWordIndex"
-                    (click)="onWordClick(tok.idx)">
-                <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
-                <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
-              </span>
-              <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
-              <br *ngIf="tok.isBr">
-              <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
-            </ng-container>
-          </span>
-        </ng-container>
-      </p>
+        <!-- Imagen a nivel raíz (standalone) -->
+        <figure *ngIf="block.tag === 'img-block' && showSceneImages" class="chapter-image scene-image-container">
+          <img [src]="block.tokens[0].src" [alt]="block.tokens[0].alt || ''" loading="lazy" (click)="openImageModal(block.tokens[0].src)" class="scene-image">
+        </figure>
 
-    </ng-container>
+        <h1 *ngIf="block.tag === 'h1'" class="chapter-heading">
+          <ng-container *ngFor="let sentence of block.sentences">
+            <span [class.active-paragraph-text]="isActiveSentence(sentence)">
+              <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
+                <span *ngIf="tok.isWord"
+                      [id]="'word-' + tok.idx"
+                      class="word"
+                      [class.active-word]="tok.idx === currentWordIndex"
+                      (click)="onWordClick(tok.idx)">
+                  <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+                  <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
+                </span>
+                <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
+                <br *ngIf="tok.isBr">
+                <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
+              </ng-container>
+            </span>
+          </ng-container>
+        </h1>
+
+        <h2 *ngIf="block.tag === 'h2'" class="chapter-heading">
+          <ng-container *ngFor="let sentence of block.sentences">
+            <span [class.active-paragraph-text]="isActiveSentence(sentence)">
+              <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
+                <span *ngIf="tok.isWord"
+                      [id]="'word-' + tok.idx"
+                      class="word"
+                      [class.active-word]="tok.idx === currentWordIndex"
+                      (click)="onWordClick(tok.idx)">
+                  <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+                  <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
+                </span>
+                <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
+                <br *ngIf="tok.isBr">
+                <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
+              </ng-container>
+            </span>
+          </ng-container>
+        </h2>
+
+        <p *ngIf="block.tag === 'p' || block.tag === 'div' || block.tag === 'blockquote'">
+          <ng-container *ngFor="let sentence of block.sentences">
+            <span [class.active-paragraph-text]="isActiveSentence(sentence)">
+              <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
+                <span *ngIf="tok.isWord"
+                      [id]="'word-' + tok.idx"
+                      class="word"
+                      [class.active-word]="tok.idx === currentWordIndex"
+                      (click)="onWordClick(tok.idx)">
+                  <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+                  <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
+                </span>
+                <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
+                <br *ngIf="tok.isBr">
+                <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
+              </ng-container>
+            </span>
+          </ng-container>
+        </p>
+
+      </ng-container>
+    </article>
+
+    <!-- TEMPLATE REUTILIZABLE PARA BLOQUES DE CONTENIDO -->
+    <ng-template #blockTemplate let-blocks="blocks">
+      <ng-container *ngFor="let block of blocks; trackBy: trackByBlock">
+
+        <!-- Imagen a nivel raíz (standalone) -->
+        <figure *ngIf="block.tag === 'img-block' && showSceneImages" class="chapter-image scene-image-container">
+          <img [src]="block.tokens[0].src" [alt]="block.tokens[0].alt || ''" loading="lazy" (click)="openImageModal(block.tokens[0].src)" class="scene-image">
+        </figure>
+
+        <h1 *ngIf="block.tag === 'h1'" class="chapter-heading">
+          <ng-container *ngFor="let sentence of block.sentences">
+            <span [class.active-paragraph-text]="isActiveSentence(sentence)">
+              <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
+                <span *ngIf="tok.isWord"
+                      [id]="'word-' + tok.idx"
+                      class="word"
+                      [class.active-word]="tok.idx === currentWordIndex"
+                      (click)="onWordClick(tok.idx)">
+                  <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+                  <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
+                </span>
+                <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
+                <br *ngIf="tok.isBr">
+                <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
+              </ng-container>
+            </span>
+          </ng-container>
+        </h1>
+
+        <h2 *ngIf="block.tag === 'h2'" class="chapter-heading">
+          <ng-container *ngFor="let sentence of block.sentences">
+            <span [class.active-paragraph-text]="isActiveSentence(sentence)">
+              <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
+                <span *ngIf="tok.isWord"
+                      [id]="'word-' + tok.idx"
+                      class="word"
+                      [class.active-word]="tok.idx === currentWordIndex"
+                      (click)="onWordClick(tok.idx)">
+                  <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+                  <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
+                </span>
+                <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
+                <br *ngIf="tok.isBr">
+                <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
+              </ng-container>
+            </span>
+          </ng-container>
+        </h2>
+
+        <p *ngIf="block.tag === 'p' || block.tag === 'div' || block.tag === 'blockquote'">
+          <ng-container *ngFor="let sentence of block.sentences">
+            <span [class.active-paragraph-text]="isActiveSentence(sentence)">
+              <ng-container *ngFor="let tok of sentence.tokens; trackBy: trackByToken">
+                <span *ngIf="tok.isWord"
+                      [id]="'word-' + tok.idx"
+                      class="word"
+                      [class.active-word]="tok.idx === currentWordIndex"
+                      (click)="onWordClick(tok.idx)">
+                  <ng-container *ngIf="!bionicReadingActive">{{ tok.text }}</ng-container>
+                  <ng-container *ngIf="bionicReadingActive"><strong class="bionic-bold">{{ tok.bionicBold }}</strong><span class="bionic-muted">{{ tok.bionicNormal }}</span></ng-container>
+                </span>
+                <ng-container *ngIf="!tok.isWord && !tok.isImg && !tok.isBr">{{ tok.text }}</ng-container>
+                <br *ngIf="tok.isBr">
+                <img *ngIf="tok.isImg && showSceneImages" [src]="tok.src" [alt]="tok.alt || ''" class="inline-img scene-image" loading="lazy" (click)="openImageModal(tok.src)">
+              </ng-container>
+            </span>
+          </ng-container>
+        </p>
+
+      </ng-container>
+    </ng-template>
   </main>
 
   <!-- Chat integrado en el sidebar - sin código flotante aquí -->
@@ -762,5 +844,34 @@
       )">pause</span>
     </button>
   </div>
+  <!-- ZONA INFERIOR PARA AUTO-HIDE / HOVER EN BARRA DE PROGRESO -->
+  <div class="bottom-hover-trigger"></div>
+
+  <!-- BARRA INFERIOR DE PROGRESO DE CAPÍTULOS Y NAVEGACIÓN (Auto-hide al hover) -->
+  <footer class="bottom-reader-nav glass-panel" [class.hidden]="isToolbarHidden">
+    <!-- Botón Capítulo Anterior -->
+    <button class="nav-chapter-btn prev" (click)="previousPage()" [disabled]="currentPage <= 1" title="Ir al capítulo anterior">
+      <span class="btn-arrow">◀</span>
+      <span class="btn-text">Capítulo Anterior</span>
+    </button>
+
+    <!-- Centro: Barra Interactiva de Progreso de Capítulos -->
+    <div class="nav-progress-center" (click)="toggleToc()" title="Clic para desplegar el selector de capítulos">
+      <div class="progress-info-badge">
+        <span class="chapter-step-text">{{ chapterProgressText }}</span>
+        <span class="percent-chip">{{ overallProgressPercent }}%</span>
+        <span class="material-symbols-rounded chapter-select-icon">unfold_more</span>
+      </div>
+      <div class="playful-progress-track">
+        <div class="playful-progress-fill" [style.width.%]="overallProgressPercent"></div>
+      </div>
+    </div>
+
+    <!-- Botón Capítulo Siguiente -->
+    <button class="nav-chapter-btn next" (click)="nextPage()" [disabled]="currentPage >= totalPages" title="Ir al capítulo siguiente">
+      <span class="btn-text">Capítulo Siguiente</span>
+      <span class="btn-arrow">▶</span>
+    </button>
+  </footer>
 
 </div>

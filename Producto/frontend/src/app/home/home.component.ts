@@ -14,6 +14,7 @@ export interface Book {
   is_featured: boolean;
   cover_image: string | null;
   tags?: { name: string; slug: string }[];
+  genres?: any[];
   price?: number;
   author_name?: string;
   ai_character_count?: number;
@@ -56,28 +57,28 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   totalBooksCount: number = 1854;
 
   // ── GAMIFICACIÓN: HISTORIAS COLECCIONABLES (SECCIÓN 1) ──
-  featuredCollectibleStories = [
+  featuredCollectibleStories: any[] = [
     {
       id: 'b1',
-      title: 'Peter Pan',
+      title: 'Peter Pan y Wendy',
       author: 'J. M. Barrie',
       genre: 'Aventura',
       level: 'Nivel 1',
-      chaptersCount: 12,
-      progress: 35,
-      cover: 'assets/default_cover.jpg',
-      slug: 'peter-pan'
+      chaptersCount: 17,
+      progress: 0,
+      cover: '/media/books/peter-pan-y-wendy-j-m-barrie/cover.jpg',
+      slug: 'peter-pan-y-wendy-j-m-barrie'
     },
     {
       id: 'b2',
-      title: 'Alicia en el País de las Maravillas',
+      title: 'Las Aventuras de Alicia en el País de las Maravillas',
       author: 'Lewis Carroll',
       genre: 'Fantasía',
       level: 'Nivel 1',
-      chaptersCount: 10,
-      progress: 60,
-      cover: 'assets/default_cover.jpg',
-      slug: 'alicia-en-el-pais-de-las-maravillas'
+      chaptersCount: 12,
+      progress: 0,
+      cover: '/media/books/las-aventuras-de-alicia-en-el-pais-de-las-maravillas-carroll-lewis/cover.jpg',
+      slug: 'las-aventuras-de-alicia-en-el-pais-de-las-maravillas-carroll-lewis'
     },
     {
       id: 'b3',
@@ -85,10 +86,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       author: 'Mark Twain',
       genre: 'Aventura',
       level: 'Nivel 2',
-      chaptersCount: 14,
-      progress: 15,
-      cover: 'assets/default_cover.jpg',
-      slug: 'las-aventuras-de-tom-sawyer'
+      chaptersCount: 35,
+      progress: 0,
+      cover: '/media/books/las-aventuras-de-tom-sawyer-mark-twain/cover.jpg',
+      slug: 'las-aventuras-de-tom-sawyer-mark-twain'
     },
     {
       id: 'b4',
@@ -96,10 +97,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       author: 'Antoine de Saint-Exupéry',
       genre: 'Fantasía',
       level: 'Nivel 1',
-      chaptersCount: 9,
-      progress: 80,
-      cover: 'assets/default_cover.jpg',
-      slug: 'el-principito'
+      chaptersCount: 27,
+      progress: 0,
+      cover: '/media/books/el-principito-antoine-de-saint-exupery/cover.jpg',
+      slug: 'el-principito-antoine-de-saint-exupery'
     }
   ];
 
@@ -517,6 +518,21 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.trendingBooks = this.allBooks.filter(b => b.is_featured).slice(0, 20);
     if (this.trendingBooks.length === 0) {
       this.trendingBooks = this.allBooks.slice(0, 20);
+    }
+
+    const sampleWithCovers = this.allBooks.filter(b => b.cover_image && b.cover_image.length > 0).slice(0, 4);
+    if (sampleWithCovers.length > 0) {
+      this.featuredCollectibleStories = sampleWithCovers.map((b, idx) => ({
+        id: b.id,
+        title: b.title,
+        author: b.author_name || 'Autor Clásico',
+        genre: (b.genres && b.genres.length > 0) ? (typeof b.genres[0] === 'string' ? b.genres[0] : (b.genres[0].name || 'Clásico')) : 'Clásico',
+        level: `Nivel ${(idx % 3) + 1}`,
+        chaptersCount: 10 + (idx * 4),
+        progress: 0,
+        cover: b.cover_image || 'assets/default_cover.jpg',
+        slug: b.slug
+      }));
     }
 
     const trendingSlugs = new Set(this.trendingBooks.map(b => b.slug));

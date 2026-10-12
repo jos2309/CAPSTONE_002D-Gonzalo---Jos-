@@ -2,6 +2,7 @@
 finance/views.py — Endpoints de Pago con Webpay Plus.
 """
 import uuid
+import logging
 from decimal import Decimal
 
 from django.conf import settings
@@ -16,6 +17,8 @@ from library.models import UserInventory
 from users.models import Profile
 from .models import Transaction
 from . import webpay_service
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -47,19 +50,22 @@ def initiate_payment(request):
     # --- Resolver el monto según el tipo de ítem ---
     if item_type == 'book':
         try:
-            book = Book.objects.prefetch_related('editions').get(slug=item_reference)
+            book = Book.objects.prefetch_related('editions').get(slug__iexact=item_reference)
         except Book.DoesNotExist:
             return Response({'error': 'Libro no encontrado.'}, status=404)
         
         edition = book.editions.first()
         if not edition:
-            return Response({'error': 'Este libro no tiene edición disponible.'}, status=400)
+            edition, _ = Edition.objects.get_or_create(
+                book=book,
+                defaults={'edition_type': 'digital', 'price': Decimal('3990.00')}
+            )
         
         # Verificar si ya lo posee
         if UserInventory.objects.filter(user=request.user, edition=edition).exists():
-            return Response({'error': 'Ya posees este libro.'}, status=400)
+            return Response({'error': 'Ya posees este libro en tu biblioteca.'}, status=400)
 
-        amount = edition.price
+        amount = edition.price if edition.price is not None else Decimal('0')
 
     elif item_type == 'ink':
         if item_reference not in INK_PACKAGES:
@@ -68,9 +74,17 @@ def initiate_payment(request):
             }, status=400)
         amount = INK_PACKAGES[item_reference]
 
-    # --- Generar IDs únicos ---
-    buy_order = f"LN-{uuid.uuid4().hex[:12].upper()}"
-    session_id = f"SES-{request.user.pk}-{uuid.uuid4().hex[:8]}"
+    # --- Generar IDs únicos limpios cumpliendo límites de Transbank ---
+    # Transbank exige:
+    #   buy_order  <= 26 caracteres alfanuméricos/guiones
+    #   session_id <= 61 caracteres alfanuméricos/guiones
+    #   amount     int estricto
+    unique_suffix = uuid.uuid4().hex[:12].upper()
+    buy_order = f"LN-{unique_suffix}"[:26]
+    
+    clean_uid = str(request.user.pk).replace('-', '')[:10]
+    session_id = f"SES-{clean_uid}-{uuid.uuid4().hex[:8]}"[:61]
+    
     return_url = settings.WEBPAY_RETURN_URL
     final_amount = int(round(float(amount)))
 
@@ -106,7 +120,12 @@ def initiate_payment(request):
             return_url=return_url,
         )
     except Exception as e:
-        return Response({'error': f'Error al contactar Transbank: {str(e)}'}, status=502)
+        logger.error(f"[Transbank Payment Exception] Excepción al crear transacción Webpay: {e}", exc_info=True)
+        print(f"[Transbank Payment Exception] Excepción al crear transacción Webpay: {type(e).__name__}: {str(e)}")
+        return Response({
+            'error': f'Error al contactar Transbank: {str(e)}',
+            'detail': str(e)
+        }, status=502)
 
     return_base_url = request.data.get('return_base_url')
 
@@ -187,8 +206,13 @@ def confirm_payment(request):
 def _deliver_item(local_txn: Transaction):
     """Entrega atómica del ítem comprado."""
     if local_txn.item_type == 'book':
-        book = Book.objects.get(slug=local_txn.item_reference)
+        book = Book.objects.prefetch_related('editions').get(slug__iexact=local_txn.item_reference)
         edition = book.editions.first()
+        if not edition:
+            edition, _ = Edition.objects.get_or_create(
+                book=book,
+                defaults={'edition_type': 'digital', 'price': Decimal('3990.00')}
+            )
         UserInventory.objects.get_or_create(
             user=local_txn.user,
             edition=edition,

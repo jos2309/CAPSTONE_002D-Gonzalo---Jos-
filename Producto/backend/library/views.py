@@ -75,7 +75,9 @@ class UserInventoryViewSet(viewsets.ReadOnlyModelViewSet):
         """
         inventory_item = self.get_object()
         book = inventory_item.edition.book
-        chapters = book.chapters.all().order_by('order').prefetch_related('audios')
+        
+        from catalog.utils import get_or_extract_chapters
+        chapters = get_or_extract_chapters(book)
         
         data = []
         for c in chapters:
@@ -96,6 +98,23 @@ class UserInventoryViewSet(viewsets.ReadOnlyModelViewSet):
                 'audios': chapter_audios
             })
             
+        if not data:
+            synopsis_p = book.synopsis or "Sinopsis no disponible en este momento."
+            content_html = (
+                f"<h1>{book.title}</h1>"
+                f"<p><em>Información de la Obra</em></p>"
+                f"<p>{synopsis_p}</p>"
+                f"<p>El contenido de esta obra está en proceso de digitalización por el equipo editorial. "
+                f"Muy pronto estará disponible para su lectura completa capítulo a capítulo.</p>"
+            )
+            data.append({
+                'id': 0,
+                'title': 'Capítulo Único (En Digitalización)',
+                'order': 1,
+                'content_html': content_html,
+                'audios': []
+            })
+
         return Response({
             'has_premium_narration': inventory_item.has_premium_narration,
             'chapters': data

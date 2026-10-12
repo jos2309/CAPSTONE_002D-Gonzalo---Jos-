@@ -70,117 +70,32 @@
       </div>
 
       <div class="collectible-grid">
-        <!-- Tarjeta 1: Peter Pan -->
-        <div class="collectible-card" (click)="goToBook('peter-pan')">
+        <div 
+          *ngFor="let book of featuredCollectibleStories" 
+          class="collectible-card" 
+          (click)="goToBook(book.slug)">
           <div class="card-cover-wrapper">
-            <div class="level-chip">Nivel 1</div>
-            <img src="assets/default_cover.jpg" alt="Peter Pan" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
+            <div class="level-chip">{{ book.level }}</div>
+            <img [src]="book.cover" [alt]="book.title" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
             <div class="card-hover-overlay">
               <span class="cta-start-btn">Comenzar aventura →</span>
             </div>
           </div>
           <div class="card-info">
             <div class="card-meta-tags">
-              <span class="genre-pill">Aventura</span>
-              <span class="chapters-pill">12 capítulos</span>
+              <span class="genre-pill">{{ book.genre }}</span>
+              <span class="chapters-pill">{{ book.chaptersCount }} capítulos</span>
             </div>
-            <h3 class="card-book-title">Peter Pan</h3>
-            <p class="card-book-author">J. M. Barrie</p>
+            <h3 class="card-book-title">{{ book.title }}</h3>
+            <p class="card-book-author">{{ book.author }}</p>
             
             <div class="card-progress-bar-wrap">
               <div class="progress-info-labels">
                 <span>Progreso</span>
-                <span>35%</span>
+                <span>{{ book.progress }}%</span>
               </div>
               <div class="card-progress-track">
-                <div class="card-progress-fill" style="width: 35%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 2: Alicia en el País de las Maravillas -->
-        <div class="collectible-card" (click)="goToBook('alicia-en-el-pais-de-las-maravillas')">
-          <div class="card-cover-wrapper">
-            <div class="level-chip">Nivel 1</div>
-            <img src="assets/default_cover.jpg" alt="Alicia en el País de las Maravillas" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
-            <div class="card-hover-overlay">
-              <span class="cta-start-btn">Comenzar aventura →</span>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-meta-tags">
-              <span class="genre-pill">Fantasía</span>
-              <span class="chapters-pill">10 capítulos</span>
-            </div>
-            <h3 class="card-book-title">Alicia en el País de las Maravillas</h3>
-            <p class="card-book-author">Lewis Carroll</p>
-            
-            <div class="card-progress-bar-wrap">
-              <div class="progress-info-labels">
-                <span>Progreso</span>
-                <span>60%</span>
-              </div>
-              <div class="card-progress-track">
-                <div class="card-progress-fill" style="width: 60%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 3: Las Aventuras de Tom Sawyer -->
-        <div class="collectible-card" (click)="goToBook('las-aventuras-de-tom-sawyer')">
-          <div class="card-cover-wrapper">
-            <div class="level-chip">Nivel 2</div>
-            <img src="assets/default_cover.jpg" alt="Las Aventuras de Tom Sawyer" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
-            <div class="card-hover-overlay">
-              <span class="cta-start-btn">Comenzar aventura →</span>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-meta-tags">
-              <span class="genre-pill">Aventura</span>
-              <span class="chapters-pill">14 capítulos</span>
-            </div>
-            <h3 class="card-book-title">Las Aventuras de Tom Sawyer</h3>
-            <p class="card-book-author">Mark Twain</p>
-            
-            <div class="card-progress-bar-wrap">
-              <div class="progress-info-labels">
-                <span>Progreso</span>
-                <span>15%</span>
-              </div>
-              <div class="card-progress-track">
-                <div class="card-progress-fill" style="width: 15%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 4: El Principito -->
-        <div class="collectible-card" (click)="goToBook('el-principito')">
-          <div class="card-cover-wrapper">
-            <div class="level-chip">Nivel 1</div>
-            <img src="assets/default_cover.jpg" alt="El Principito" class="card-cover-img" onerror="this.src='assets/default_cover.jpg'">
-            <div class="card-hover-overlay">
-              <span class="cta-start-btn">Comenzar aventura →</span>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-meta-tags">
-              <span class="genre-pill">Fantasía</span>
-              <span class="chapters-pill">9 capítulos</span>
-            </div>
-            <h3 class="card-book-title">El Principito</h3>
-            <p class="card-book-author">Antoine de Saint-Exupéry</p>
-            
-            <div class="card-progress-bar-wrap">
-              <div class="progress-info-labels">
-                <span>Progreso</span>
-                <span>80%</span>
-              </div>
-              <div class="card-progress-track">
-                <div class="card-progress-fill" style="width: 80%;"></div>
+                <div class="card-progress-fill" [style.width.%]="book.progress"></div>
               </div>
             </div>
           </div>

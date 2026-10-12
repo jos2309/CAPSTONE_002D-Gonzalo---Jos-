@@ -128,10 +128,10 @@ export class CategoriesComponent implements OnInit {
 
   categories: Category[] = [];
   featuredBooks: FeaturedBook[] = [
-    { title: 'Peter Pan', author: 'J. M. Barrie', genre: 'Aventura', slug: 'peter-pan', cover: 'assets/default_cover.jpg' },
-    { title: 'Alicia en el País de las Maravillas', author: 'Lewis Carroll', genre: 'Fantasía', slug: 'alicia-en-el-pais-de-las-maravillas', cover: 'assets/default_cover.jpg' },
-    { title: 'Las Aventuras de Tom Sawyer', author: 'Mark Twain', genre: 'Aventura', slug: 'las-aventuras-de-tom-sawyer', cover: 'assets/default_cover.jpg' },
-    { title: 'El Principito', author: 'Antoine de Saint-Exupéry', genre: 'Fantasía', slug: 'el-principito', cover: 'assets/default_cover.jpg' }
+    { title: 'Peter Pan y Wendy', author: 'J. M. Barrie', genre: 'Aventura', slug: 'peter-pan-y-wendy-j-m-barrie', cover: '/media/books/peter-pan-y-wendy-j-m-barrie/cover.jpg' },
+    { title: 'Las Aventuras de Alicia en el País de las Maravillas', author: 'Lewis Carroll', genre: 'Fantasía', slug: 'las-aventuras-de-alicia-en-el-pais-de-las-maravillas-carroll-lewis', cover: '/media/books/las-aventuras-de-alicia-en-el-pais-de-las-maravillas-carroll-lewis/cover.jpg' },
+    { title: 'Las Aventuras de Tom Sawyer', author: 'Mark Twain', genre: 'Aventura', slug: 'las-aventuras-de-tom-sawyer-mark-twain', cover: '/media/books/las-aventuras-de-tom-sawyer-mark-twain/cover.jpg' },
+    { title: 'El Principito', author: 'Antoine de Saint-Exupéry', genre: 'Fantasía', slug: 'el-principito-antoine-de-saint-exupery', cover: '/media/books/el-principito-antoine-de-saint-exupery/cover.jpg' }
   ];
 
   private categoryIconsMap: Record<string, string> = {

@@ -172,6 +172,11 @@ export class BookDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
     this.liyumi.stopSpeaking();
   }
 
+  get isFree(): boolean {
+    if (!this.book?.editions || this.book.editions.length === 0) return true;
+    return Number(this.book.editions[0].price) === 0;
+  }
+
   handleAction(): void {
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
@@ -180,9 +185,37 @@ export class BookDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
 
     if (this.isOwned && this.book.inventory_id) {
       this.router.navigate(['/reader', this.book.inventory_id]);
-    } else {
-      this.router.navigate(['/checkout', 'book', this.slug]);
+      return;
     }
+
+    // Si es un libro GRATUITO ($0 CLP), añadirlo DIRECTAMENTE en 1 clic sin pasar por Webpay
+    if (this.isFree && this.slug) {
+      this.purchaseLoading = true;
+      this.purchaseErrorMsg = '';
+      this.api.post<any>('finance/pay/', {
+        item_type: 'book',
+        item_reference: this.slug,
+        return_base_url: window.location.origin
+      }).subscribe({
+        next: (res) => {
+          this.purchaseLoading = false;
+          if (res.status === 'FREE_PURCHASE_SUCCESS') {
+            this.isOwned = true;
+            this.loadBookDetails(this.slug!);
+            this.liyumi.wave('¡Excelente elección! 🎉 La obra se ha añadido gratis a tu biblioteca. ¡A leer!');
+          }
+        },
+        error: (err) => {
+          this.purchaseLoading = false;
+          this.purchaseErrorMsg = err.error?.error || err.error?.detail || 'No se pudo añadir la obra a tu biblioteca.';
+          console.error('Error en adición gratuita:', err);
+        }
+      });
+      return;
+    }
+
+    // Si es un libro de PAGO (> 0 CLP), ir al Checkout para la pasarela Webpay
+    this.router.navigate(['/checkout', 'book', this.slug]);
   }
 
   getDifficultyLabel(level: string): string {

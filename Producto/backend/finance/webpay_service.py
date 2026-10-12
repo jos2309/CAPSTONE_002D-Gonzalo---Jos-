@@ -1,10 +1,13 @@
 """
 finance/webpay_service.py — Abstracción del SDK Transbank Webpay Plus.
 """
+import logging
 from django.conf import settings
 from transbank.webpay.webpay_plus.transaction import Transaction
 from transbank.common.options import WebpayOptions
 from transbank.common.integration_type import IntegrationType
+
+logger = logging.getLogger(__name__)
 
 
 def _get_webpay_transaction():
@@ -24,18 +27,36 @@ def _get_webpay_transaction():
 def create_transaction(buy_order: str, session_id: str, amount: int, return_url: str) -> dict:
     """
     Inicia una transacción Webpay Plus.
-    Devuelve {'token': str, 'url': str} para construir el POST al formulario.
+    Restricciones estrictas de Transbank:
+      - buy_order  <= 26 caracteres alfanuméricos/guiones.
+      - session_id <= 61 caracteres alfanuméricos/guiones.
+      - amount     int estricto (sin decimales ni comas).
+      - return_url URL pública o local válida.
     """
+    # Garantizar límites y tipos de datos estrictos
+    clean_buy_order = str(buy_order).strip()[:26]
+    clean_session_id = str(session_id).strip()[:61]
+    clean_amount = int(round(float(amount)))
+
     tx = _get_webpay_transaction()
-    response = tx.create(
-        buy_order=buy_order,
-        session_id=session_id,
-        amount=amount,
-        return_url=return_url,
-    )
+    try:
+        response = tx.create(
+            buy_order=clean_buy_order,
+            session_id=clean_session_id,
+            amount=clean_amount,
+            return_url=return_url,
+        )
+    except Exception as e:
+        logger.error(f"[Transbank SDK Error] Excepción en create_transaction: {e}", exc_info=True)
+        print(f"[Transbank SDK Error] Excepción en create_transaction: {type(e).__name__}: {str(e)}")
+        raise
+
+    token = getattr(response, 'token', None) or (response.get('token') if isinstance(response, dict) else None)
+    url = getattr(response, 'url', None) or (response.get('url') if isinstance(response, dict) else None)
+
     return {
-        'token': response.get('token'),
-        'url': response.get('url'),
+        'token': token,
+        'url': url,
     }
 
 
@@ -45,18 +66,29 @@ def confirm_transaction(token: str) -> dict:
     Devuelve el dict completo de respuesta de Transbank.
     """
     tx = _get_webpay_transaction()
-    response = tx.commit(token=token)
+    try:
+        response = tx.commit(token=token)
+    except Exception as e:
+        logger.error(f"[Transbank SDK Error] Excepción en confirm_transaction: {e}", exc_info=True)
+        print(f"[Transbank SDK Error] Excepción en confirm_transaction: {type(e).__name__}: {str(e)}")
+        raise
+
+    def _get_val(obj, key):
+        if isinstance(obj, dict):
+            return obj.get(key)
+        return getattr(obj, key, None)
+
     return {
-        'vci': response.get('vci'),
-        'amount': response.get('amount'),
-        'status': response.get('status'),
-        'buy_order': response.get('buy_order'),
-        'session_id': response.get('session_id'),
-        'card_detail': response.get('card_detail'),
-        'accounting_date': response.get('accounting_date'),
-        'transaction_date': str(response.get('transaction_date')),
-        'authorization_code': response.get('authorization_code'),
-        'payment_type_code': response.get('payment_type_code'),
-        'response_code': response.get('response_code'),
-        'installments_number': response.get('installments_number'),
+        'vci': _get_val(response, 'vci'),
+        'amount': _get_val(response, 'amount'),
+        'status': _get_val(response, 'status'),
+        'buy_order': _get_val(response, 'buy_order'),
+        'session_id': _get_val(response, 'session_id'),
+        'card_detail': _get_val(response, 'card_detail'),
+        'accounting_date': _get_val(response, 'accounting_date'),
+        'transaction_date': str(_get_val(response, 'transaction_date')),
+        'authorization_code': _get_val(response, 'authorization_code'),
+        'payment_type_code': _get_val(response, 'payment_type_code'),
+        'response_code': _get_val(response, 'response_code'),
+        'installments_number': _get_val(response, 'installments_number'),
     }

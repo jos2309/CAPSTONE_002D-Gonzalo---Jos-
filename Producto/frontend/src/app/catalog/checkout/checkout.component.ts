@@ -86,7 +86,15 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMsg = err.error?.error || 'Error al iniciar el pago. Intenta nuevamente.';
+        console.error("Error en inicio de pago Transbank:", err);
+        const backendError = err.error?.error || err.error?.detail || err.error?.message;
+        if (backendError) {
+          this.errorMsg = backendError;
+        } else if (err.status === 401) {
+          this.errorMsg = 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.';
+        } else {
+          this.errorMsg = 'Error al iniciar el pago. Intenta nuevamente.';
+        }
       }
     });
   }

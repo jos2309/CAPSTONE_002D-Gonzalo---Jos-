@@ -34,7 +34,12 @@ environ.Env.read_env(BASE_DIR / '.env')
 
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
+    'literatus-novelist-backend.onrender.com',
+    '.onrender.com',
+    'localhost',
+    '127.0.0.1',
+])
 
 # ---------------------------------------------------------------------------
 # Aplicaciones instaladas
@@ -63,8 +68,6 @@ INSTALLED_APPS = [
     'library.apps.LibraryConfig',
     'ai_engine.apps.AiEngineConfig',
     'dashboard',
-    
-
 ]
 
 # Modelo de usuario personalizado
@@ -76,6 +79,7 @@ AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -112,11 +116,11 @@ TEMPLATES = [
 ]
 
 # ---------------------------------------------------------------------------
-# Base de datos — PostgreSQL vía DATABASE_URL en .env
+# Base de datos — PostgreSQL vía DATABASE_URL o SQLite local de respaldo
 # ---------------------------------------------------------------------------
 
 DATABASES = {
-    'default': env.db(),
+    'default': env.db('DATABASE_URL', default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
 
 # ---------------------------------------------------------------------------
@@ -140,10 +144,20 @@ USE_I18N = True
 USE_TZ = True
 
 # ---------------------------------------------------------------------------
-# Archivos estáticos y media
+# Archivos estáticos y media (WhiteNoise & Supabase)
 # ---------------------------------------------------------------------------
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Si tenemos Supabase configurado, usamos su URL publica para los media files
 SUPABASE_URL = env('SUPABASE_URL', default=None)
@@ -160,13 +174,17 @@ PRIVATE_MEDIA_ROOT = BASE_DIR / 'private_media'
 # ---------------------------------------------------------------------------
 
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+    'https://literatus-novelist.vercel.app',
+    'http://localhost:4200',
     'http://localhost:3000',
     'http://localhost:5173',
-    'http://localhost:4200',
     'http://192.168.1.8:4200',
     'capacitor://localhost',
     'http://localhost',
 ])
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.vercel\.app$",
+]
 # Desactivado para producción (Seguridad)
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
@@ -177,6 +195,8 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # ---------------------------------------------------------------------------
 # Django REST Framework

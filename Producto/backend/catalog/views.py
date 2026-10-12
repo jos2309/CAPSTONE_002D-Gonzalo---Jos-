@@ -186,6 +186,59 @@ class BookViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = BookDetailFullSerializer(book, context={'request': request})
         return Response(serializer.data)
 
+    @action(detail=True, methods=['GET'], url_path='content')
+    def content(self, request, slug=None):
+        """
+        Endpoint que entrega el contenido/capítulos del libro por slug.
+        /api/v1/catalog/books/<slug>/content/
+        Si la obra no tiene archivo EPUB cargado o capítulos creados en BD,
+        devuelve al menos un capítulo de muestra/texto estructurado.
+        """
+        queryset = self.get_queryset()
+        book = get_object_or_404(queryset, slug=slug)
+        from .utils import get_or_extract_chapters
+        chapters = get_or_extract_chapters(book)
+
+        data = []
+        for c in chapters:
+            chapter_audios = []
+            for audio in c.audios.all():
+                chapter_audios.append({
+                    'id': audio.id,
+                    'voice_name': audio.voice_name,
+                    'audio_url': request.build_absolute_uri(audio.audio_file.url) if audio.audio_file else None,
+                    'alignment_data': audio.alignment_data
+                })
+            data.append({
+                'id': c.id,
+                'title': c.title,
+                'order': c.order,
+                'content_html': c.content_html,
+                'audios': chapter_audios
+            })
+
+        if not data:
+            synopsis_p = book.synopsis or "Sinopsis no disponible en este momento."
+            content_html = (
+                f"<h1>{book.title}</h1>"
+                f"<p><em>Información de la Obra</em></p>"
+                f"<p>{synopsis_p}</p>"
+                f"<p>El contenido de esta obra está en proceso de digitalización por el equipo editorial. "
+                f"Muy pronto estará disponible para su lectura completa capítulo a capítulo.</p>"
+            )
+            data.append({
+                'id': 0,
+                'title': 'Capítulo Único (En Digitalización)',
+                'order': 1,
+                'content_html': content_html,
+                'audios': []
+            })
+
+        return Response({
+            'has_premium_narration': False,
+            'chapters': data
+        })
+
     @action(detail=True, methods=['POST'])
     def purchase(self, request, slug=None):
         """

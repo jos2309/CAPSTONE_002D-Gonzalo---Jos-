@@ -109,13 +109,15 @@ def process_epub(epub_path, book_slug):
 if __name__ == "__main__":
     base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "assets_to_import"))
     
-    principito_path = os.path.join(base_path, "El_principito-Antoine_de_Saint-Exupery.epub")
-    process_epub(principito_path, "el-principito")
+    principito_book = Book.objects.filter(slug="el-principito-antoine-de-saint-exupery").first() or Book.objects.filter(title__icontains="Principito").first()
+    if principito_book:
+        principito_path = os.path.join(base_path, "El_principito-Antoine_de_Saint-Exupery.epub")
+        process_epub(principito_path, principito_book.slug)
     
-    # El slug puede ser el-principe-feliz o el-principe-feliz-y-otros-cuentos
     principe_feliz_book = Book.objects.filter(title__icontains="Príncipe Feliz").first()
     if principe_feliz_book:
         principe_path = os.path.join(base_path, "El_principe_feliz_y_otros_cuentos-Wilde_Oscar.epub")
         process_epub(principe_path, principe_feliz_book.slug)
     else:
         print("No se encontró el libro El Príncipe Feliz en la BD.")
+

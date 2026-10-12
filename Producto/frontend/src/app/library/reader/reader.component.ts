@@ -71,7 +71,10 @@ export class ReaderComponent implements OnInit, OnDestroy {
   // ── UX ───────────────────────────────────────────────────────────
   fontSize: number = 18;
   currentTheme: 'dark' | 'light' | 'sepia' | 'nocturno' = 'dark';
-  currentFontFamily: 'sans' | 'serif' | 'dyslexic' | 'medieval' | 'garamond' | 'georgia' | 'palatino' | 'opensans' | 'helvetica' = 'serif';
+  currentFontFamily: 'lexend' | 'comic' | 'opendyslexic' | 'sans' | 'serif' | 'dyslexic' | 'medieval' | 'garamond' | 'georgia' | 'palatino' | 'opensans' | 'helvetica' = 'lexend';
+  readingMode: 'scroll' | 'paginated' = 'scroll';
+  currentBlockPage: number = 1;
+  blocksPerPage: number = 3;
   isTocOpen: boolean = false;
   lastScrollTop: number = 0;
   isToolbarHidden: boolean = false;
@@ -253,10 +256,13 @@ export class ReaderComponent implements OnInit, OnDestroy {
     this.loadInkBalance();
 
     const savedFont = localStorage.getItem('reader-font-family');
-    const validFonts = ['sans', 'serif', 'dyslexic', 'medieval', 'garamond', 'georgia', 'palatino', 'opensans', 'helvetica'];
+    const validFonts = ['lexend', 'comic', 'opendyslexic', 'sans', 'serif', 'dyslexic', 'medieval', 'garamond', 'georgia', 'palatino', 'opensans', 'helvetica'];
     if (savedFont && validFonts.includes(savedFont)) {
       this.currentFontFamily = savedFont as any;
     }
+
+    // Modo de Desplazamiento Vertical Continuo por Defecto
+    this.readingMode = 'scroll';
 
     const savedTheme = localStorage.getItem('reader-theme');
     const validThemes = ['dark', 'light', 'sepia', 'nocturno'];
@@ -451,6 +457,7 @@ export class ReaderComponent implements OnInit, OnDestroy {
   loadInitialData() {
     if (this.isInitialDataLoaded || this.isLoadingInitialData) return;
     this.isLoadingInitialData = true;
+    this.isOverlayActive = true;
 
     this.api.get<any>(`library/inventory/${this.inventoryId}/`).subscribe({
       next: (inventory) => {
@@ -474,7 +481,12 @@ export class ReaderComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error cargando inventario', err);
-        this.router.navigate(['/catalog']);
+        this.isLoadingInitialData = false;
+        this.isOverlayActive = false;
+        this.chapters = [];
+        this.chapterTitle = 'El contenido de esta obra está en proceso de digitalización';
+        this.cdr.detectChanges();
+        setTimeout(() => this.router.navigate(['/catalog']), 2500);
       }
     });
   }
@@ -548,6 +560,14 @@ export class ReaderComponent implements OnInit, OnDestroy {
     
     // No guardamos palabra aquí, solo porcentaje exacto
     this.saveProgressSubject.next(exactPage);
+  }
+
+  get overallProgressPercent(): number {
+    if (!this.totalPages || this.totalPages === 0) return 0;
+    const currentChapterWeight = 100 / this.totalPages;
+    const completedChaptersPercent = ((this.currentPage - 1) / this.totalPages) * 100;
+    const inChapterPercent = (this.chapterScrollPercent / 100) * currentChapterWeight;
+    return Math.min(100, Math.round(completedChaptersPercent + inChapterPercent));
   }
 
   checkIfNearEnd() {
@@ -662,9 +682,85 @@ export class ReaderComponent implements OnInit, OnDestroy {
     localStorage.setItem('reader-font-size', this.fontSize.toString());
   }
 
-  setFontFamily(font: 'sans' | 'serif' | 'dyslexic' | 'medieval' | 'garamond' | 'georgia' | 'palatino' | 'opensans' | 'helvetica') {
+  setFontFamily(font: 'lexend' | 'comic' | 'opendyslexic' | 'sans' | 'serif' | 'dyslexic' | 'medieval' | 'garamond' | 'georgia' | 'palatino' | 'opensans' | 'helvetica') {
     this.currentFontFamily = font;
     localStorage.setItem('reader-font-family', font);
+  }
+
+  setReadingMode(mode: 'scroll' | 'paginated') {
+    this.readingMode = mode;
+    this.currentBlockPage = 1;
+    localStorage.setItem('reader-reading-mode', mode);
+  }
+
+  get totalBlockPages(): number {
+    if (!this.renderedBlocks || this.renderedBlocks.length === 0) return 1;
+    return Math.max(1, Math.ceil(this.renderedBlocks.length / this.blocksPerPage));
+  }
+
+  get leftPageBlocks(): any[] {
+    if (!this.renderedBlocks || this.renderedBlocks.length === 0) return [];
+    const start = (this.currentBlockPage - 1) * this.blocksPerPage;
+    return this.renderedBlocks.slice(start, start + this.blocksPerPage);
+  }
+
+  get rightPageBlocks(): any[] {
+    if (!this.renderedBlocks || this.renderedBlocks.length === 0) return [];
+    const start = this.currentBlockPage * this.blocksPerPage;
+    return this.renderedBlocks.slice(start, start + this.blocksPerPage);
+  }
+
+  get rightPageNumber(): number | null {
+    return (this.currentBlockPage + 1 <= this.totalBlockPages) ? this.currentBlockPage + 1 : null;
+  }
+
+  get chapterProgressText(): string {
+    return `Capítulo ${this.currentPage} de ${this.totalPages} • ${this.overallProgressPercent}% leído`;
+  }
+
+  get paginatedBlocks(): any[] {
+    return this.renderedBlocks || [];
+  }
+
+  nextBlockPage() {
+    if (this.currentBlockPage + 1 < this.totalBlockPages) {
+      this.currentBlockPage += 2;
+      const viewer = document.querySelector('.reading-canvas');
+      if (viewer) viewer.scrollTop = 0;
+    } else if (this.currentBlockPage < this.totalBlockPages) {
+      this.currentBlockPage += 1;
+      const viewer = document.querySelector('.reading-canvas');
+      if (viewer) viewer.scrollTop = 0;
+    } else if (this.currentPage < this.totalPages) {
+      this.nextPage();
+      this.currentBlockPage = 1;
+    }
+  }
+
+  prevBlockPage() {
+    if (this.currentBlockPage > 2) {
+      this.currentBlockPage -= 2;
+      const viewer = document.querySelector('.reading-canvas');
+      if (viewer) viewer.scrollTop = 0;
+    } else if (this.currentBlockPage === 2) {
+      this.currentBlockPage = 1;
+      const viewer = document.querySelector('.reading-canvas');
+      if (viewer) viewer.scrollTop = 0;
+    } else if (this.currentPage > 1) {
+      this.previousPage();
+      this.currentBlockPage = 1;
+    }
+  }
+
+  normalizeTextCase(text: string): string {
+    if (!text || text.length <= 1) return text;
+    const letters = text.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ]/g, '');
+    if (!letters) return text;
+    if (letters === letters.toUpperCase() && letters.length > 2) {
+      const lower = text.toLowerCase();
+      return lower.replace(/(^\s*[\wáéíóúñ]|[.!?¿¡]\s*[\wáéíóúñ]|-\s*[\wáéíóúñ])/gi, m => m.toUpperCase());
+    }
+    return text;
   }
 
   setTheme(theme: 'dark' | 'light' | 'sepia' | 'nocturno') {
@@ -758,6 +854,7 @@ export class ReaderComponent implements OnInit, OnDestroy {
     if (this.chapters && this.chapters.length > 0) return;
     this.api.get(`library/inventory/${this.inventoryId}/chapters/`).subscribe({
       next: (res: any) => {
+        this.isLoadingInitialData = false;
         if (res && res.chapters && res.chapters.length > 0) {
           this.chapters = res.chapters;
           this.hasPremiumNarration = res.has_premium_narration;
@@ -766,19 +863,29 @@ export class ReaderComponent implements OnInit, OnDestroy {
           this.renderCurrentChapter();
           this.loadAvatars(); // Cargar personajes una vez tenemos el inventario
         } else {
-          this.chapterTitle = 'Sin contenido';
-          this.safeChapterHtml = this.sanitizer.bypassSecurityTrustHtml('<p>El libro no tiene capítulos procesados.</p>');
+          this.chapterTitle = 'En digitalización';
+          this.chapters = [];
+          this.totalPages = 1;
+          this.safeChapterHtml = this.sanitizer.bypassSecurityTrustHtml('<p>El contenido de esta obra está en proceso de digitalización.</p>');
+          this.isLoadingInitialData = false;
+          this.isOverlayActive = false;
+          this.isFullyRendered = true;
+          this.cdr.detectChanges();
         }
       },
       error: (err) => {
         console.error('Error al cargar capítulos', err);
-        this.chapterTitle = 'Error';
-        // Si el inventario no pertenece al usuario o no existe (404), redirigir
-        if (err.status === 404 || err.status === 401) {
-          setTimeout(() => this.router.navigate(['/catalog']), 2000);
-        }
-        this.safeChapterHtml = this.sanitizer.bypassSecurityTrustHtml('<p>Hubo un error cargando el contenido.</p>');
+        this.chapterTitle = 'En digitalización';
+        this.chapters = [];
+        this.totalPages = 1;
+        this.safeChapterHtml = this.sanitizer.bypassSecurityTrustHtml('<p>El contenido de esta obra está en proceso de digitalización.</p>');
+        this.isLoadingInitialData = false;
         this.isOverlayActive = false;
+        this.isFullyRendered = true;
+        this.cdr.detectChanges();
+        if (err.status === 404 || err.status === 401) {
+          setTimeout(() => this.router.navigate(['/catalog']), 2500);
+        }
       }
     });
   }
@@ -827,7 +934,8 @@ export class ReaderComponent implements OnInit, OnDestroy {
       const tokens: typeof this.parsedBlocks[0]['tokens'] = [];
       node.childNodes.forEach(child => {
         if (child.nodeType === Node.TEXT_NODE) {
-          const parts = (child.textContent || '').split(/(\s+)/);
+          const textVal = this.normalizeTextCase(child.textContent || '');
+          const parts = textVal.split(/(\s+)/);
           parts.forEach(part => {
             if (part.trim().length > 0) {
               const split = this.getBionicSplit(part);
