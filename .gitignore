@@ -9,6 +9,13 @@ db.sqlite3
 media/
 *.log
 
+# Variables de entorno y secretos (¡Muy importante!)
+.env
+*.env
+
+# Archivos estáticos recolectados en producción (Django)
+staticfiles/
+
 # Angular / Frontend
 node_modules/
 dist/
