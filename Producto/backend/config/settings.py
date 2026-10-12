@@ -288,4 +288,4 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='resend')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='onboarding@resend.dev')
 
-# Auto-reload trigger
+# Auto-reload trigger: updated EMAIL_HOST_PASSWORD
